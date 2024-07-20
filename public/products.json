@@ -1,0 +1,368 @@
+[
+  {
+    "id": 1,
+    "name": "Men's Casual Shirt",
+    "category": ["Clothing","New Arrivals"],
+    "price": 19.99,
+    "currency": "USD",
+    "originalPrice": 89.90,
+    "discount": 24,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Comfortable cotton t-shirt in blue.",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p1/image1.jpg",
+    "image2": "/products/p1/image2.jpg",
+    "image3": "/products/p1/image3.jpg",
+    "inStock": true
+  },
+  {
+    "id": 2,
+    "name": "Denim Jackets",
+    "category": ["Clothing","Best Sellers"],
+    
+    "price": 49.99,
+    "currency": "USD",
+    "originalPrice": 59.99,
+    "discount": 20,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Slim-fit black jacket, perfect for any occasion.",
+    "sizes": [
+      "28",
+      "30",
+      "32",
+      "34"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p2/image1.jpg",
+    "image2": "/products/p2/image2.jpg",
+    "image3": "/products/p2/image3.jpg",
+    "inStock": true
+  },
+  {
+    "id": 3,
+    "name": "Running Shoes",
+    "category": ["Shoes","Best Sellers"],
+    "price": 79.99,
+    "currency": "USD",
+    "originalPrice": 89.99,
+    "discount": 11,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Lightweight running shoes with cushioned soles.",
+    "sizes": [
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p3/image1.jpg",
+    "image2": "/products/p3/image2.jpg",
+    "image3": "/products/p3/image3.jpg",
+    "inStock": false
+  },
+  {
+    "id": 4,
+    "name": "Backpack",
+    "category": ["Accessories","New Arrivals"],
+    "price": 39.99,
+    "currency": "USD",
+    "originalPrice": 89.90,
+    "discount": 24,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Durable backpack with multiple compartments.",
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p4/image1.jpg",
+    "image2": "/products/p4/image2.jpg",
+    "image3": "/products/p4/image3.jpg",
+    "inStock": true
+  },
+  {
+    "id": 5,
+    "name": "Women's Maxi Skirt",
+    "category": "Women",
+    "type": "Skirt",
+    "price": 29.99,
+    "currency": "USD",
+    "originalPrice": 39.99,
+    "discount": 25,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "A flowing maxi skirt perfect for a casual yet elegant look.",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p5/image1.jpg",
+    "image2": "/products/p5/image2.jpg",
+    "image3": "/products/p5/image3.jpg",
+    "inStock": true
+  },
+  {
+    "id": 6,
+    "name": "Men's Dress Shirt",
+    "category": "Men",
+    "type": "Shirt",
+    "price": 59.99,
+    "currency": "USD",
+    "originalPrice": 79.99,
+    "discount": 25,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Classic dress shirt for formal occasions.",
+    "sizes": [
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p6/image1.jpg",
+    "image2": "/products/p6/image2.jpg",
+    "image3": "/products/p6/image3.jpg",
+    "inStock": true
+  },
+  {
+    "id": 7,
+    "name": ["Leather Wallet","New Arrivals"],
+    "category": "Accessories",
+    "price": 29.99,
+    "currency": "USD",
+    "originalPrice": 89.90,
+    "discount": 24,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Genuine leather wallet with multiple card slots.",
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p7/image1.jpg",
+    "image2": "/products/p7/image2.jpg",
+    "image3": "/products/p7/image3.jpg",
+    "inStock": true
+  },
+  {
+    "id": 8,
+    "name": ["Casual Sneakers","New Arrivals"],
+    "category": "Shoes",
+    "price": 39.99,
+    "currency": "USD",
+    "originalPrice": 89.90,
+    "discount": 24,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Comfortable sneakers for everyday wear.",
+    "sizes": [
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p8/image1.jpg",
+    "image2": "/products/p8/image2.jpg",
+    "image3": "/products/p8/image3.jpg",
+    "inStock": false
+  },
+  {
+    "id": 9,
+    "name": "Summer Dress",
+    "category": "Women",
+    "type": "Dress",
+    "price": 34.99,
+    "currency": "USD",
+    "originalPrice": 44.99,
+    "discount": 22,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Light and breezy dress for hot summer days.",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p9/image1.jpg",
+    "image2": "/products/p9/image2.jpg",
+    "image3": "/puoducts/p9/image3.jpg",
+    "inStock": true
+  },
+  {
+    "id": 10,
+    "name": "Classic Watch",
+    "category": ["Accessories","Best Sellers"],
+    "price": 99.99,
+    "currency": "USD",
+    "originalPrice": 89.90,
+    "discount": 24,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Elegant watch with a leather strap.",
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p10/image1.jpg",
+    "image2": "/products/p10/image2.jpg",
+    "image3": "/products/p10/image3.jpg",
+    "inStock": false
+  },
+  {
+    "id": 11,
+    "name": "Winter Jacket",
+    "category": "Clothing",
+    "price": 89.99,
+    "currency": "USD",
+    "originalPrice": 89.90,
+    "discount": 24,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Warm and stylish jacket for cold winters.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p11/image1.jpg",
+    "image2": "/products/p11/image2.jpg",
+    "image3": "/products/p11/image3.jpg",
+    "inStock": true
+  },
+  {
+    "id": 12,
+    "name": "Men's Slim Fit Suit",
+    "category": ["Men","Best Sellers"],
+    "type": "Suit",
+    "price": 199.99,
+    "currency": "USD",
+    "originalPrice": 249.99,
+    "discount": 20,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Tailored slim fit suit for formal occasions.",
+    "sizes": [
+      "40R",
+      "42R",
+      "44R"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p12/image1.jpg",
+    "image2": "/products/p12/image2.jpg",
+    "image3": "/products/p12/image3.jpg",
+    "inStock": true
+  },
+  {
+    "id": 13,
+    "name": "Vintage Sunglasses",
+    "category": ["Accessories","New Arrivals"],
+    "price": 24.99,
+    "currency": "USD",
+    "originalPrice": 89.90,
+    "discount": 24,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Stylish vintage sunglasses with UV protection.",
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p13/image1.jpg",
+    "image2": "/products/p13/image2.jpg",
+    "image3": "/products/p13/image3.jpg",
+    "inStock": true
+  },
+  {
+    "id": 14,
+    "name": "Knit Sweater",
+    "category": ["Clothing","New Arrivals"],
+    "price": 54.99,
+    "currency": "USD",
+    "originalPrice": 85.99,
+    "discount": 20,
+    "details":"Cotton wounded dress for daily uses , better use reviews for the products",
+    "description": "Cozy knit sweater for chilly days.",
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p14/image1.jpg",
+    "image2": "/products/p14/image2.jpg",
+    "image3": "/products/p14/image3.jpg",
+    "inStock": false
+  },
+  {
+    "id": 15,
+    "name": "Cotton Knitted Laggings",
+    "category": ["Clothing"],
+    "price": 19.99,
+    "currency": "USD",
+    "originalPrice": 89.90,
+    "discount": 24,
+    "details":"Cotton wounded laggings for daily uses , better use reviews for the products",
+    "description": "Comfortable cotton laggings in red.",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "red",
+      "blue",
+      "pink"
+    ],
+    "image1": "/products/p15/image1.jpg",
+    "image2": "/products/p15/image2.jpg",
+    "image3": "/products/p15/image3.jpg",
+    "inStock": true
+  }
+]
