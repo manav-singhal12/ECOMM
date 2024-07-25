@@ -1,16 +1,17 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import styles from './Customer.css'; // Import your CSS styles
+import styles from './Customer.css'; // Ensure the path is correct
 import Image from "next/image";
+
 const Customer = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(0);
   const [animate, setAnimate] = useState(false);
 
   const customers = [
-    { id: 1, name: "John", views:  ' "I love shopping here! The variety of styles and sizes available always ensures I find something that fits perfectly. Great experience every time. The quality of the clothes is excellent, and they always have the latest trends!""' },
-    { id: 2, name: "Sarah", views: '"The customer service is outstanding. They helped me pick out a suit for a wedding, and I felt confident in my choice. I appreciate how easy it is to navigate the website. Finding what I want and checking out is a breeze."'},
-    { id: 3, name: "David", views: '"I ve been shopping here for years. The loyalty rewards and occasional discounts make it worthwhile to keep coming back.I enjoy the eco-friendly options available here. It is nice to shop with a company that cares about sustainability"' },
-    { id: 4, name: "Sophia", views: ' "The clothing is stylish and affordable. It is a great place to shop for both casual and formal wear.I love receiving updates on new arrivals. It keeps me excited about shopping and discovering new pieces."' },
+    { id: 1, name: "John", views: 'I love shopping here! The variety of styles and sizes available always ensures I find something that fits perfectly. Great experience every time. The quality of the clothes is excellent, and they always have the latest trends!' },
+    { id: 2, name: "Sarah", views: 'The customer service is outstanding. They helped me pick out a suit for a wedding, and I felt confident in my choice. I appreciate how easy it is to navigate the website. Finding what I want and checking out is a breeze.' },
+    { id: 3, name: "David", views: 'I ve been shopping here for years. The loyalty rewards and occasional discounts make it worthwhile to keep coming back. I enjoy the eco-friendly options available here. It is nice to shop with a company that cares about sustainability.' },
+    { id: 4, name: "Sophia", views: 'The clothing is stylish and affordable. It is a great place to shop for both casual and formal wear. I love receiving updates on new arrivals. It keeps me excited about shopping and discovering new pieces.' },
   ];
 
   useEffect(() => {

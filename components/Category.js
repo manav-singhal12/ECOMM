@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -33,7 +33,7 @@ export default function CategoryPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 mx-4 ">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
-            <div key={product.id} className="bg-white  rounded-lg overflow-hidden shadow-2xl   border-2 ">
+            <div key={product.id} className="bg-white rounded-lg overflow-hidden shadow-2xl border-2 ">
               <Link href={`/product/${product.id}`}>
                 <div>
                   <Image
@@ -47,17 +47,16 @@ export default function CategoryPage() {
               </Link>
               <div className="p-4">
                 <Link href={`/product/${product.id}`}>
-                  <class12 className="block text-xl font-semibold text-gray-800  hover:text-customPink">{product.name}</class12>
+                  <span className="block text-xl font-semibold text-gray-800 hover:text-customPink">{product.name}</span>
                 </Link>
                 <div className="flex justify-between">
-                <div className='text-xl text-pink-500 font-semibold'>₹{product.price}</div>
-
-<div className='flex items-center'>
-        <p className='text-sm line-through text-gray-500 mr-2'>₹{product.originalPrice}</p>
-        <span className='bg-yellow-500 text-white px-2 py-1 rounded-md text-xs'>{product.discount}% off</span>
-      </div>
-</div>
+                  <div className='text-xl text-pink-500 font-semibold'>₹{product.price}</div>
+                  <div className='flex items-center'>
+                    <p className='text-sm line-through text-gray-500 mr-2'>₹{product.originalPrice}</p>
+                    <span className='bg-yellow-500 text-white px-2 py-1 rounded-md text-xs'>{product.discount}% off</span>
+                  </div>
                 </div>
+              </div>
             </div>
           ))
         ) : (

@@ -126,7 +126,7 @@ export default function ProductPage() {
                 className="my-2 h-20 w-20 cursor-pointer object-contain"
                 width={120}
                 height={120}
-                quality={100}
+                // quality={100}
                 src={product.image1}
                 alt="Product Image 1"
                 onClick={() => setImageIndex(0)}
@@ -136,7 +136,7 @@ export default function ProductPage() {
                   className="my-2 h-20 w-20 cursor-pointer object-contain"
                   width={120}
                   height={120}
-                  quality={100}
+                  // quality={100}
                   src={product.image2}
                   alt="Product Image 2"
                   onClick={() => setImageIndex(1)}
@@ -147,7 +147,7 @@ export default function ProductPage() {
                   className="my-2 h-20 w-20 cursor-pointer object-contain"
                   width={120}
                   height={120}
-                  quality={100}
+                  // quality={100}
                   src={product.image3}
                   alt="Product Image 3"
                   onClick={() => setImageIndex(2)}

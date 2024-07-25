@@ -15,7 +15,7 @@
     "fs": "^0.0.1-security",
     "lottie-web": "^5.12.2",
     "mongoose": "^8.4.0",
-    "next": "^14.2.3",
+    "next": "^14.2.5",
     "next-auth": "^4.24.7",
     "razorpay": "^2.9.4",
     "react": "^18.3.1",

@@ -72,7 +72,7 @@ const Order = () => {
                 className="h-[20vh] md:h-auto w-full md:w-[20vw] object-contain"
                 width={420}
                 height={420}
-                quality={100}
+                // quality={100}
                 src={order[k].image1}
                 alt="Product Image 1"
             />
