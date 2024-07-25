@@ -1,3 +1,4 @@
+// pages/api/auth/[...nextauth].js
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import connectDB from '@/db/connectdb';
@@ -7,26 +8,30 @@ import { verifyPassword } from '@/db/auth';
 export default NextAuth({
   providers: [
     CredentialsProvider({
-      // The name to display on the sign-in form (e.g., "Sign in with...")
       name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'text' },
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        await connectDB();
+        try {
+          await connectDB();
 
-        const user = await User.findOne({ email: credentials.email });
-        if (!user) {
-          throw new Error('No user found with the email');
+          const user = await User.findOne({ email: credentials.email });
+          if (!user) {
+            throw new Error('No user found with the email');
+          }
+
+          const isValid = await verifyPassword(credentials.password, user.password);
+          if (!isValid) {
+            throw new Error('Invalid password');
+          }
+
+          return { email: user.email, name: user.name };
+        } catch (error) {
+          console.error('Authorize error:', error);
+          throw new Error('Authorization error');
         }
-
-        const isValid = await verifyPassword(credentials.password, user.password);
-        if (!isValid) {
-          throw new Error('Invalid password');
-        }
-
-        return { email: user.email, name: user.name };
       }
     })
   ],

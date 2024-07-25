@@ -11,10 +11,11 @@
   "dependencies": {
     "@lordicon/element": "^1.6.0",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "fast-json-stable-stringify": "^2.0.0",
     "fs": "^0.0.1-security",
     "lottie-web": "^5.12.2",
-    "mongoose": "^8.4.0",
+    "mongoose": "^8.5.1",
     "next": "^14.2.5",
     "next-auth": "^4.24.7",
     "punycode": "^2.3.1",
