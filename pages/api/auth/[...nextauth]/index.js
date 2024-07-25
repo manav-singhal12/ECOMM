@@ -1,9 +1,9 @@
 // pages/api/auth/[...nextauth].js
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import connectDB from '../../../lib/mongodb';
+import connectDB from '@/db/connectdb';
 import User from '../../../models/User';
-import { verifyPassword } from '../../../lib/auth';
+import { verifyPassword } from '@/db/auth';
 
 export default NextAuth({
   providers: [
