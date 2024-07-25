@@ -1,4 +1,3 @@
-// pages/api/auth/[...nextauth].js
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -18,17 +17,20 @@ export default NextAuth({
       },
       async authorize(credentials) {
         try {
+          // Find user by email
           const user = await User.findOne({ email: credentials.email });
           if (!user) {
             throw new Error('No user found with the email');
           }
 
+          // Verify password
           const isValid = await bcrypt.compare(credentials.password, user.password);
           if (!isValid) {
             throw new Error('Password is incorrect');
           }
 
-          return { email: user.email, name: user.name, id: user._id };
+          // Return user object if authentication is successful
+          return { email: user.email, name: user.name, id: user._id.toString() };
         } catch (error) {
           throw new Error('Error authorizing user: ' + error.message);
         }
@@ -41,12 +43,14 @@ export default NextAuth({
   ],
   callbacks: {
     async session({ session, token }) {
-      session.user.id = token.id; // Set the user ID in the session
+      // Set the user ID in the session
+      session.user.id = token.id;
       return session;
     },
     async jwt({ token, user }) {
+      // Set the user ID in the token
       if (user) {
-        token.id = user.id; // Set the user ID in the token
+        token.id = user.id;
       }
       return token;
     },
