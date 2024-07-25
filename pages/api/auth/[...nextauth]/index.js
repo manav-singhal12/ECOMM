@@ -2,7 +2,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import connectDB from '@/db/connectdb';
-import User from '../../../models/User';
+import User from '@/models/User';
 import { verifyPassword } from '@/db/auth';
 
 export default NextAuth({
