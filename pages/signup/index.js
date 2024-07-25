@@ -86,12 +86,12 @@ const Signup = () => {
         <title>Signup for better experience</title>
         <meta name="description" content="Contact us to learn more about our clothing products." />
       </Head>
-      <div className="bg-pink-200 w-1/2 justify-center mx-auto my-4 h-[80vh] py-6 flex flex-col items-center rounded-lg">
+      <div className="bg-pink-200 w-1/2 justify-center mx-auto my-4 h-[60vh] py-6 flex flex-col items-center rounded-lg">
         <div className="text-center mb-8">
           <h1 className="font-bold text-4xl py-2">SIGN UP</h1>
         </div>
         <div className="container max-w-md w-full p-4">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6 ">
             <div className="flex flex-col gap-1">
               <input
                 type="text"
@@ -128,7 +128,7 @@ const Signup = () => {
             {error.general && <p className="text-red-500">{error.general}</p>}
             <input
               type="submit"
-              className="border-pink-400 border-2 mb-8 p-2 font-semibold text-lg text-white cursor-pointer bg-customPink rounded-xl"
+              className="border-pink-400 border-2  p-2 font-semibold text-lg text-white cursor-pointer bg-customPink rounded-xl"
             />
           </form>
           {/* <div className="border-t-2 border-black opacity-50 w-full max-w-md mx-auto text-center mb-2"></div>
