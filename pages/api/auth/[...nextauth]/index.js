@@ -1,62 +1,57 @@
 import NextAuth from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import User from '@/models/User'; // Adjust this import as needed
 import connectDB from '@/db/connectdb';
-import bcrypt from 'bcrypt';
-
-connectDB();
+import User from '@/models/User';
+import { verifyPassword } from '@/db/auth';
 
 export default NextAuth({
   providers: [
     CredentialsProvider({
+      // The name to display on the sign-in form (e.g., "Sign in with...")
       name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        email: { label: 'Email', type: 'text' },
+        password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        try {
-          // Find user by email
-          const user = await User.findOne({ email: credentials.email });
-          if (!user) {
-            throw new Error('No user found with the email');
-          }
+        await connectDB();
 
-          // Verify password
-          const isValid = await bcrypt.compare(credentials.password, user.password);
-          if (!isValid) {
-            throw new Error('Password is incorrect');
-          }
-
-          // Return user object if authentication is successful
-          return { email: user.email, name: user.name, id: user._id.toString() };
-        } catch (error) {
-          throw new Error('Error authorizing user: ' + error.message);
+        const user = await User.findOne({ email: credentials.email });
+        if (!user) {
+          throw new Error('No user found with the email');
         }
+
+        const isValid = await verifyPassword(credentials.password, user.password);
+        if (!isValid) {
+          throw new Error('Invalid password');
+        }
+
+        return { email: user.email, name: user.name };
       }
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
-    }),
+    })
   ],
-  callbacks: {
-    async session({ session, token }) {
-      // Set the user ID in the session
-      session.user.id = token.id;
-      return session;
-    },
-    async jwt({ token, user }) {
-      // Set the user ID in the token
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-  },
-  secret: process.env.NEXTAUTH_SECRET,
   session: {
     jwt: true,
   },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.email = user.email;
+        token.name = user.name;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user = token;
+      return session;
+    }
+  },
+  pages: {
+    signIn: '/auth/signin',
+    signOut: '/auth/signout',
+    error: '/auth/error',
+    verifyRequest: '/auth/verify-request',
+    newAccount: '/auth/new-account'
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 });
