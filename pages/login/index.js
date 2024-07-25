@@ -34,7 +34,7 @@ const Login = () => {
     if (result.error) {
       setError(result.error);
     } else {
-      router.push('/dashboard'); // Redirect to the dashboard or any other page on successful login
+      router.push('/cart'); // Redirect to the dashboard or any other page on successful login
     }
   };
 
@@ -43,9 +43,9 @@ const Login = () => {
         <title>Login for better experience</title>
         <meta name="description" content="Contact us to learn more about our clothing products." />
       </Head>
-    <div className="bg-pink-200 py-6 flex flex-col items-center">
-      <div className="text-center mb-4">
-        <h1 className="font-bold text-3xl py-2">Login</h1>
+    <div className="bg-pink-200 py-6 w-1/2 mx-auto h-[45vh] my-4 flex flex-col items-center rounded-lg">
+      <div className="text-center mb-8">
+        <h1 className="font-bold text-4xl py-2">LOGIN</h1>
       </div>
       <div className="container max-w-md w-full p-4">
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">

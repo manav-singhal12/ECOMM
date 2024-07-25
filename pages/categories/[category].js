@@ -1,44 +1,50 @@
-// pages/category/[category].js
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import productsData from '@/public/products.json';
+import productswholesaleData from '@/public/productswholesale.json';
 import '@/app/globals.css';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
+
 export const metadata = {
   title: "Looks-Explore Categories",
   description: "Find best styling products from here",
 };
+
 export default function CategoryDetailPage() {
   const router = useRouter();
   const { category } = router.query; // Extract the category from the query parameters
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const { data: session } = useSession(); // Access session data
 
   useEffect(() => {
     // Initialize categories and filtered products on component mount
-    if (Array.isArray(productsData)) {
-      const uniqueCategories = ['All', ...new Set(productsData.flatMap((product) => product.category))];
+    if (Array.isArray(productsData) || Array.isArray(productswholesaleData)) {
+      const userProductsData = session?.user?.email.endsWith('@looks') ? productswholesaleData : productsData;
+      const uniqueCategories = ['All', ...new Set(userProductsData.flatMap((product) => product.category))];
       setCategories(uniqueCategories);
-      setFilteredProducts(productsData);
+      setFilteredProducts(userProductsData);
     } else {
-      console.error("productsData is not an array", productsData);
+      console.error("Product data is not an array", productsData, productswholesaleData);
     }
-  }, []);
+  }, [session]);
 
   useEffect(() => {
     // Ensure category is defined and a string
     if (typeof category === 'string' && category.trim() !== '') {
+      const userProductsData = session?.user?.email.endsWith('@looks') ? productswholesaleData : productsData;
       // Filter products based on the category parameter
-      const filtered = productsData.filter((product) => product.category.includes(category));
+      const filtered = userProductsData.filter((product) => product.category.includes(category));
       setFilteredProducts(filtered);
     } else {
       // If category is not defined or empty, reset filtered products to show All
-      setFilteredProducts(productsData);
+      const userProductsData = session?.user?.email.endsWith('@looks') ? productswholesaleData : productsData;
+      setFilteredProducts(userProductsData);
     }
-  }, [category]);
+  }, [category, session]);
 
   // Handle initial loading state or undefined category
   if (!category) {

@@ -1,10 +1,8 @@
-// pages/product/[id].js
-
+"use client";
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-// import Navbar from '@/components/Navbar';
-// import Footer from '@/components/Footer';
 import productsData from '@/public/products.json';
+import productswholesaleData from '@/public/productswholesale.json';
 import { toast, ToastContainer } from 'react-toastify';
 import { Bounce } from 'react-toastify';
 import Image from 'next/image';
@@ -13,24 +11,37 @@ import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
+
 export const metadata = {
   title: "Looks-Product",
   description: "Find best styling products from here",
 };
-export default function ProductPage() {
 
-  // console.log(addToCart)
+export default function ProductPage() {
   const router = useRouter();
   const { id } = router.query;
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [imageIndex, setImageIndex] = useState(0);
-  const [count, setcount] = useState(0)
   const [cart, setCart] = useState({});
-  const [sizes, setSizes] = useState(0)
+  const [sizes, setSizes] = useState([]);
   const { data: session } = useSession();
 
-  console.log("cart", cart)
+  useEffect(() => {
+    if (id) {
+      const productData = session?.user?.email?.endsWith('@looks') ? productswholesaleData : productsData;
+      const foundProduct = productData.find(product => product.id === parseInt(id));
+      if (foundProduct) {
+        setProduct(foundProduct);
+        setSizes(foundProduct.sizes || []); // Set sizes if available
+      } else {
+        setProduct(null);
+        console.log(`Product with ID ${id} not found`);
+      }
+      setLoading(false);
+    }
+  }, [id, session]);
+
   useEffect(() => {
     try {
       if (localStorage.getItem("cart")) {
@@ -41,77 +52,17 @@ export default function ProductPage() {
       localStorage.clear();
     }
   }, []);
-  const { itemcode, qty, description, price, name, size, variant, image1, total } = router.query;
 
-  const [order, setOrder] = useState({});
-  // const [sizes, setSizes] = useState(0);
-  const [subTotal, setSubTotal] = useState(0);
-
-  const addToOrder = (itemcode, qty, description, price, name, size, variant, image1) => {
-    const currentTime = new Date();
-  const formattedTime = `${currentTime.toLocaleDateString()} ${currentTime.toLocaleTimeString()}`;
-;
-// localStorage.clear()
-    let newOrder = order;
-    newOrder[itemcode] = { qty, price, name, image1, time: formattedTime };
-    setOrder(newOrder);
-    saveOrder(newOrder);
-    toast('Item Added to Bag', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
-    });
-  };
-
-  useEffect(() => {
-    try {
-      if (localStorage.getItem('order')) {
-        setOrder(JSON.parse(localStorage.getItem('order')));
-      }
-    } catch (error) {
-      console.error(error);
-      localStorage.clear();
-    }
-  }, []);
-
-  const saveOrder = (myOrder) => {
-    localStorage.setItem('order', JSON.stringify(myOrder));
-    let subt = 0;
-    let keys = Object.keys(myOrder);
-    for (let i = 0; i < keys.length; i++) {
-      subt += myOrder[keys[i]].price * myOrder[keys[i]].qty;
-    }
-    setSubTotal(subt);
-  };
-
-  // useEffect(() => {
-  //   if (!session) {
-  //     router.push('/signup');
-  //   }
-  // }, [router, session]);
   const saveCart = (myCart) => {
     localStorage.setItem("cart", JSON.stringify(myCart));
-    let subt = 0;
-    let keys = Object.keys(cart);
-    // for (let i = 0; i < keys.length; i++) {
-    //     subt += myCart[keys[i]].price * myCart[keys[i]].qty
-    // }
-    // setSubTotal(subt);
   };
 
   const addToCart = (itemcode, qty, description, price, name, size, variant, image1) => {
-    // console.log(image1)
-    let newCart = cart;
-    if (itemcode in cart) {
-      newCart[itemcode].qty = cart[itemcode].qty + qty;
+    let newCart = { ...cart };
+    if (itemcode in newCart) {
+      newCart[itemcode].qty += qty;
     } else {
-      newCart[itemcode] = { qty: 1, price, name, image1 };
+      newCart[itemcode] = { qty, price, name, image1 };
     }
     setCart(newCart);
     saveCart(newCart);
@@ -127,36 +78,7 @@ export default function ProductPage() {
       transition: Bounce,
     });
   };
-  useEffect(() => {
-    setLoading(true);
-    if (id && productsData) {
-      const foundProduct = productsData.find((product) => product.id === parseInt(id));
-      if (foundProduct) {
-        setProduct(foundProduct);
-      } else {
-        console.log(`Product with ID ${id} not found`);
-        setProduct(null); // Clear product state if not found
-      }
-    }
-    setLoading(false);
-  }, [id]);
-  const add = () => {
-    setcount(count + 1)
-  }
-  const sub = () => {
-    if (count > 0) {
-      setcount(count - 1)
-    }
-  }
 
-  useEffect(() => {
-    // Assuming productsData is an array of products where each product has a sizes array
-    if (Array.isArray(productsData) && productsData.length > 0) {
-      // Fetch sizes from the first product (you can adjust this based on your specific data structure)
-      const sizesFromJson = productsData[0].sizes; // Change the index or structure as per your JSON
-      setSizes(sizesFromJson);
-    }
-  }, []);
   if (loading) return <div>Loading...</div>;
 
   if (!product) {
@@ -174,27 +96,31 @@ export default function ProductPage() {
     }
   };
 
+  // Determine quantity based on session user name
+  const quantity = session?.user?.email.endsWith('@looks') ? 5 : 1;
+
   return (
-    <><ToastContainer
-      position="top-right"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      theme="light"
-    />
-    <Head>
-    <title>Explore the product</title>
-    <meta name="description" content="Contact us to learn more about our clothing products." />
-  </Head>
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <Head>
+        <title>Explore the product</title>
+        <meta name="description" content="Contact us to learn more about our clothing products." />
+      </Head>
       <div className="flex flex-col lg:flex-row my-4">
         {/* Left Section - Product Images */}
         <div className="lg:w-2/5 flex flex-col items-center justify-center mb-6 lg:mb-0">
-          <div className="flex  sm:flex-row  items-center">
+          <div className="flex sm:flex-row items-center">
             <div className="flex flex-col items-center lg:items-start w-full lg:w-auto">
               <Image
                 className="my-2 h-20 w-20 cursor-pointer object-contain"
@@ -229,7 +155,7 @@ export default function ProductPage() {
               )}
             </div>
             <Image
-              className="lg:ml-6 h-96 lg:h-[60vh] lg:w-[75%] object-contain" 
+              className="lg:ml-6 h-96 lg:h-[60vh] lg:w-[75%] object-contain"
               width={720}
               height={480}
               src={getImageUrl()}
@@ -246,7 +172,10 @@ export default function ProductPage() {
               ></lord-icon>
               Add to Favourite
             </button>
-            <button onClick={() => { addToCart(product.id, 1, product.description, product.price, product.name, "S", "M", product.image1) }} className="border-2 border-customPink bg-customPink text-white p-2 flex gap-1 justify-center items-center">
+            <button 
+              onClick={() => addToCart(product.id, quantity, product.description, product.price, product.name, "S", "M", product.image1)} 
+              className="border-2 border-customPink bg-customPink text-white p-2 flex gap-1 justify-center items-center"
+            >
               <lord-icon
                 src="https://cdn.lordicon.com/mqdkoaef.json"
                 trigger="hover"
@@ -263,28 +192,24 @@ export default function ProductPage() {
           <h1 className="font-semibold text-customPink text-4xl uppercase">{product.name}</h1>
           <p className="text-lg">{product.catchy}</p>
           <p>Category: {product.category}</p>
-          {product.inStock === true && <p className='text-customPink text-lg'>In Stock</p>}
-          {product.inStock === false && <p className='text-customPink text-lg'>Out of Stock</p>}
+          {product.inStock ? <p className='text-customPink text-lg'>In Stock</p> : <p className='text-customPink text-lg'>Out of Stock</p>}
 
           <div className="flex my-4 gap-5">
             <p className="text-5xl text-customPink">₹{product.price}</p>
             <p className="text-customPink text-lg line-through mt-5">₹{product.originalPrice}</p>
-            <p className="text-xl mt-5 ">{product.discount}% off</p>
+            <p className="text-xl mt-5">{product.discount}% off</p>
           </div>
-          {/* <p>Product Rating</p> */}
           <p>Product Code: {product.id}</p>
           <p className="text-2xl text-customPink my-4 font-semibold">Product Details</p>
           <p>{product.details}</p>
           <p className="text-2xl text-customPink my-4 font-semibold">Product Description</p>
           <p>{product.description}</p>
           <div className="colors mt-6">
-            <p className="text-customPink text-lg ">Available Colors</p>
+            <p className="text-customPink text-lg">Available Colors</p>
             <div className="flex gap-2 mt-2">
               <div className={`h-8 w-8 bg-red-500 border-2 cursor-pointer rounded-full`}></div>
               <div className={`h-8 w-8 bg-blue-500 border-2 cursor-pointer rounded-full`}></div>
               <div className={`h-8 w-8 bg-green-500 border-2 cursor-pointer rounded-full`}></div>
-
-              {/* Add more color options here */}
             </div>
           </div>
           <div className="flex mt-6">
@@ -292,10 +217,8 @@ export default function ProductPage() {
               <p className="text-customPink text-lg">Available Sizes</p>
               <div className="flex gap-2 mt-2">
                 {sizes.map((size, index) => (
-                  <div key={index} className="flex justify-center items-center bg-customPink text-white  h-8 w-8 border-2 border-pink-400 rounded-md cursor-pointer" >{size}</div>
-                ))
-                }
-                {/* Add more size options here */}
+                  <div key={index} className="flex justify-center items-center bg-customPink text-white h-8 w-8 border-2 border-pink-400 rounded-md cursor-pointer">{size}</div>
+                ))}
               </div>
             </div>
             
@@ -304,19 +227,19 @@ export default function ProductPage() {
                 src="https://cdn.lordicon.com/pbrgppbb.json"
                 trigger="hover"
                 colors="primary:#EB3963"
-
                 style={{ width: '25px', height: '25px' }}
-              /><style jsx>{`
-                                .icon-hover:hover {
-                                  filter: brightness(256S110); 
-                                }
-                              `}</style>
+              />
+              <style jsx>{`
+                .icon-hover:hover {
+                  filter: brightness(1.1); 
+                }
+              `}</style>
               <Link
                 href={{
                   pathname: '/order',
                   query: {
                     itemcode: product.id,
-                    qty: 1,
+                    qty: quantity,
                     description: product.description,
                     price: product.price,
                     name: product.name,
@@ -327,15 +250,13 @@ export default function ProductPage() {
                 }}
                 passHref
               >
-                <span className="">
-                  Buy Now
-                </span>
+                <span>Buy Now</span>
               </Link>
             </div>
           </div>
         </div>
-
       </div>
     </>
   );
 }
+  

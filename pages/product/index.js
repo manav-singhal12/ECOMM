@@ -1,31 +1,39 @@
 "use client";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import productsData from '@/public/products.json'; // Assuming this path is correct
 import Head from 'next/head';
+import productsData from '@/public/products.json'; // Assuming this path is correct
+import productswholesaleData from '@/public/productswholesale.json';
+import { useSession } from 'next-auth/react';
+
 export const metadata = {
   title: "Looks-Product",
   description: "Find best styling products from here",
 };
+
 const ProductsPage = () => {
-  // State to manage categories
   const [categories, setCategories] = useState([]);
+  const { data: session } = useSession(); // Access session data
 
   useEffect(() => {
-    // Extract unique categories from productsData
-    if (Array.isArray(productsData)) {
-      const uniqueCategories = [...new Set(productsData.map(product => product.category))];
+    // Determine the product data based on the session user name
+    const productData = session?.user?.email?.endsWith('@looks') ? productswholesaleData : productsData;
+
+    // Extract unique categories from the selected product data
+    if (Array.isArray(productData)) {
+      const uniqueCategories = [...new Set(productData.map(product => product.category))];
       setCategories(uniqueCategories);
     } else {
-      console.error("productsData is not an array", productsData);
+      console.error("productData is not an array", productData);
     }
-  }, []);
+  }, [session]);
 
   return (
-    <div><Head>
-    <title>Explore the product</title>
-    <meta name="description" content="Contact us to learn more about our clothing products." />
-  </Head>
+    <div>
+      <Head>
+        <title>Explore the product</title>
+        <meta name="description" content="Contact us to learn more about our clothing products." />
+      </Head>
       <h1>All Products</h1>
       <ul>
         {categories.length > 0 ? (
