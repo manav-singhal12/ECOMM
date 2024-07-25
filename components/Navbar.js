@@ -33,7 +33,7 @@ const Navbar = () => {
         setIsOpen(!isOpen);
     };
     return (
-        <nav className='nav relative flex flex-wrap justify-between items-center w-full bg-sky-200 sticky top-0 p-4 z-50'>
+        <nav className='nav flex flex-wrap justify-between items-center w-full bg-sky-200 sticky top-0 p-4 z-50'>
             <ul className='flex flex-wrap gap-4 md:gap-10 items-center w-full md:w-auto'>
                 <li>
                     <Link href='/' className="logo">

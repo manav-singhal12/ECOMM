@@ -4,8 +4,12 @@ import Footer from '@/components/Footer';
 import Head from 'next/head';
 import '@/app/globals.css';
 import Image from 'next/image';
-import { metadata } from './metadata';
+// import { metadata } from './metadata';
 
+const metadata = {
+    title: "Best Styling Products",
+    description: "Find best styling products from here",
+  }
 function MyApp({ Component, pageProps }) {
     return (
         <div className="min-h-screen flex flex-col">
