@@ -9,15 +9,18 @@ const Orders = () => {
     const { data: session } = useSession();
 
     useEffect(() => {
-        if (session) {
-            axios.get('/api/order/get')
+        if (session && session.user.email) {
+            axios.get('/api/order/get', { params: { user_email: session.user.email } })
                 .then(response => {
-                    
-                    setOrders(response.data.order || {});
+                    setOrders(response.data.order || {}); // Ensure cart is an object
+                    calculateSubtotal(response.data.items || {});
+                    console.log(session.user.email);
                     console.log(response.data.order);
+                    // setLoading(false);
                 })
                 .catch(error => {
-                    console.error('Error fetching orders:', error);
+                    console.error('Error fetching cart:', error);
+                    // setLoading(false);
                 });
         }
     }, [session]);
