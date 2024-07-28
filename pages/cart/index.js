@@ -23,7 +23,7 @@ const Cart = () => {
             axios.get('/api/cart/get', { params: { user_email: session.user.email } })
                 .then(response => {
                     setCart(response.data.cart || {}); // Ensure cart is an object
-                    calculateSubtotal(response.data.items || {});
+                    // calculateSubtotal(response.data.items || {});
                     console.log(session.user.email);
                     console.log(response.data.items);
                     // setLoading(false);
