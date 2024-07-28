@@ -17,18 +17,19 @@ const Cart = () => {
     const [cart, setCart] = useState({}); // Initialize cart as an empty object
     const [subTotal, setSubTotal] = useState(0);
     const { data: session } = useSession();
-
     useEffect(() => {
-            axios.get('/api/cart/get')
+        if (session) {
+            axios.get('/api/cart/get', { withCredentials: true })
                 .then(response => {
                     setCart(response.data.cart || {}); // Ensure cart is an object
                     calculateSubtotal(response.data.cart || {});
-                    // console.log(response.data);
                 })
                 .catch(error => {
                     console.error('Error fetching cart:', error);
                 });
+        }
     }, [session]);
+    
 
     const calculateSubtotal = (cart) => {
         let subt = 0;

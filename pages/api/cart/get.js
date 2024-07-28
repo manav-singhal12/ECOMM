@@ -7,6 +7,7 @@ export default async function handler(req, res) {
     console.log('Session:', session); // Debugging line
 
     if (!session) {
+        console.log('Unauthorized access attempt:', req.headers);
         return res.status(401).json({ message: 'Unauthorized' });
     }
 
