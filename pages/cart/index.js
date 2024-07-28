@@ -35,13 +35,13 @@ const Cart = () => {
         }
     }, [session]);
 
-    const calculateSubtotal = (cart) => {
-        let subt = 0;
-        Object.values(cart).forEach(item => {
-            subt += item.price * item.qty;
-        });
-        setSubTotal(subt);
-    };
+    // const calculateSubtotal = (cart) => {
+    //     let subt = 0;
+    //     Object.values(cart).forEach(item => {
+    //         subt += item.price * item.qty;
+    //     });
+    //     setSubTotal(subt);
+    // };
 
     const saveCart = (myCart) => {
         localStorage.setItem("cart", JSON.stringify(myCart));

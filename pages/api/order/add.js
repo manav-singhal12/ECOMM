@@ -1,38 +1,35 @@
-// pages/api/add-to-order.js
-import { MongoClient } from 'mongodb';
-
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
+import connectDB from '@/db/connectdb';
+import Order from '@/models/Order';
+import User from '@/models/User';
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    try {
-      await client.connect();
-      const database = client.db('test');
-      const collection = database.collection('orders');
+    await connectDB();
 
-      const { user_email, order } = req.body;
-      
-      if (!user_email || !order) {
-        return res.status(400).json({ message: 'User ID and order are required.' });
-      }
+    if (req.method === 'POST') {
+        const { user_email, order } = req.body;
 
-      // Save order to the database
-      await collection.updateOne(
-        { user_email },
-        { $set: { order } },
-        { upsert: true }
-      );
+        try {
+            const user = await User.findOne({ email: user_email });
 
-      res.status(200).json({ message: 'order saved successfully.' });
-    } catch (error) {
-      console.error('Failed to save order:', error);
-      res.status(500).json({ message: 'Failed to save order.' });
-    } finally {
-      await client.close();
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            const newOrder = new Order({
+                userId: user._id,
+                date: new Date(),
+                items: order.items,
+            });
+
+            await newOrder.save();
+
+            res.status(201).json({ message: 'Order added successfully', order: newOrder });
+        } catch (error) {
+            console.error('Error adding order:', error);
+            res.status(500).json({ message: 'Server error' });
+        }
+    } else {
+        res.setHeader('Allow', ['POST']);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
     }
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
 }

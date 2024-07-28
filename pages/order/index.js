@@ -46,85 +46,90 @@ const Order = () => {
   };
 
   const addToOrder = async (itemcode, qty, description, price, name, size, variant, image1) => {
-    const updatedorder = { ...order };
-    const formatDateTime = () => {
-      const now = new Date();
-      
-      const month = now.getMonth() + 1; // Months are 0-based
-      const day = now.getDate();
-      const year = now.getFullYear();
-      
-      let hours = now.getHours();
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const seconds = String(now.getSeconds()).padStart(2, '0');
-      
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours || 12; // the hour '0' should be '12'
-      
-      return `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+    const updatedOrder = {
+        productId: itemcode,
+        name,
+        price,
+        qty,
+        image: image1,
     };
-    
-    // Usage
+
+    // Format current date and time
+    const formatDateTime = () => {
+        const now = new Date();
+
+        const month = now.getMonth() + 1; // Months are 0-based
+        const day = now.getDate();
+        const year = now.getFullYear();
+
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours || 12; // the hour '0' should be '12'
+
+        return `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+    };
+
     const currentDate = formatDateTime();
     console.log(currentDate); // e.g., "7/26/2024 5:02:07 PM"
-    
-    
-      updatedorder[session.user.email] = { qty, price, name, image1,time: currentDate };  
-    
-    setOrder(updatedorder);
-    saveOrder(updatedorder);
 
     // Save order to MongoDB
     if (session?.user?.email) {
-      try {
-        const response = await fetch('/api/order/add', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            user_email: session.user.email,
-            order: updatedorder,
-          }),
-        });
+        try {
+            const response = await fetch('/api/order/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_email: session.user.email,
+                    order: {
+                        items: [updatedOrder],
+                        date: currentDate,
+                    },
+                }),
+            });
 
-        if (response.ok) {
-          toast('Item Added to Bag', {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            transition: Bounce,
-          });
-        } else {
-          const data = await response.json();
-          toast.error(`Failed to save order: ${data.message}`, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            transition: Bounce,
-          });
+            if (response.ok) {
+                toast('Item Added to Bag', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    transition: Bounce,
+                });
+            } else {
+                const data = await response.json();
+                toast.error(`Failed to save order: ${data.message}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    transition: Bounce,
+                });
+            }
+        } catch (error) {
+            console.error('Failed to save order:', error);
+            toast.error('Failed to save order.', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                transition: Bounce,
+            });
         }
-      } catch (error) {
-        console.error('Failed to save order:', error);
-        toast.error('Failed to save order.', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          transition: Bounce,
-        });
-      }
     }
-  };
+};
+
   return (
     <>
       <Head>
