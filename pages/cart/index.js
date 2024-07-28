@@ -259,7 +259,7 @@ const Cart = () => {
                 pauseOnHover
                 theme="light"
             />
-            <div>
+            <div className='min-h-[90vh]'> 
                 {Object.keys(cart).length === 0 && (
                     <p className="flex justify-center cart-center my-4 text-xl font-semibold text-customPink">
                         No items in the cart

@@ -29,7 +29,7 @@ console.log(orderList);
               <title>Your Orders</title>
               <meta name="description" content="View your order history." />
           </Head>
-          <div>
+          <div className='min-h-[90vh]'>
               <h1 className="text-2xl font-semibold text-center my-4">Your Orders</h1>
               {orderList.length === 0 && (
                   <p className="flex justify-center orders-center my-4 text-xl font-semibold text-customPink">
@@ -41,12 +41,12 @@ console.log(orderList);
                     return (
                         <div
                             key={key}
-                            className="flex fl md:flex-row gap-14 h-auto md:h-[30vh] border-2 my-4 mx-2 md:mx-20 rounded-lg shadow-2xl p-4"
+                            className="flex fl md:flex-row gap-14 h-[10vh] md:h-[30vh] border-2 my-4 mx-2 md:mx-20 rounded-lg shadow-2xl p-4"
                         >
                             <Image
-                                className="h-[20vh] md:h-auto w-full md:w-[20vw] object-contain"
-                                width={420}
-                                height={420}
+                                className="h-[10vh] md:h-auto w-full md:w-[20vw] object-contain"
+                                width={200}
+                                height={200}
                                 quality={100}
                                 src={item.image1}
                                 alt="Product Image"
