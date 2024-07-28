@@ -36,3 +36,11 @@ export default async function handler(req, res) {
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
+
+// if (req.method === 'GET') {
+//   const cart = await Cart.findOne({ user_email: session.user.email });
+//   if (!cart) {
+//       return res.status(200).json({ items: {} });
+//   }
+//   res.status(200).json(cart);
+// } 
