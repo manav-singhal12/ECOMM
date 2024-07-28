@@ -47,55 +47,19 @@ const Cart = () => {
         localStorage.setItem("cart", JSON.stringify(myCart));
       };
     
-    const addToCart = async (itemcode, qty, description, price, name, size, variant, image1) => {
+      const addToCart = async (itemcode, qty, description, price, name, size, variant, image1) => {
         const updatedCart = { ...cart };
+        const increment = session?.user?.email?.endsWith("_looks") ? 5 : 1;
+        
         if (itemcode in updatedCart) {
-          updatedCart[itemcode].qty += 5;
+            updatedCart[itemcode].qty += increment;
         } else {
-          updatedCart[itemcode] = { qty, price, name, image1 };
+            updatedCart[itemcode] = { qty: increment, price, name, image1 };
         }
         setCart(updatedCart);
         saveCart(updatedCart);
     
         // Save cart to MongoDB
-        if (session?.user?.email) {
-          try {
-            const response = await fetch('/api/cart/add', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                user_email: session.user.email,
-                cart: updatedCart,
-              }),
-            });
-    
-            if (response.ok) {
-            } else {
-              const data = await response.json();
-            }
-          } catch (error) {
-            console.error('Failed to save cart:', error);
-          }
-        }
-      };
-    
-      const removefromCart = async (itemcode, qty, description, price, name, size, variant, image1) => {
-        const updatedCart = { ...cart };
-        
-        if (itemcode in updatedCart) {
-            updatedCart[itemcode].qty = Math.max(updatedCart[itemcode].qty - 5, 0);
-            if (updatedCart[itemcode].qty === 0) {
-                delete updatedCart[itemcode];
-            }
-        } else {
-            updatedCart[itemcode] = { qty: Math.max(qty - 5, 0), price, name, image1 };
-        }
-        
-        setCart(updatedCart);
-        saveCart(updatedCart);
-    
         if (session?.user?.email) {
             try {
                 const response = await fetch('/api/cart/add', {
@@ -110,14 +74,59 @@ const Cart = () => {
                 });
     
                 if (response.ok) {
+                    // Handle success if needed
                 } else {
                     const data = await response.json();
+                    // Handle error if needed
                 }
             } catch (error) {
                 console.error('Failed to save cart:', error);
             }
         }
     };
+    
+    const removefromCart = async (itemcode, qty, description, price, name, size, variant, image1) => {
+        const updatedCart = { ...cart };
+        const decrement = session?.user?.email?.endsWith("_looks") ? 5 : 1;
+    
+        if (itemcode in updatedCart) {
+            updatedCart[itemcode].qty = Math.max(updatedCart[itemcode].qty - decrement, 0);
+            if (updatedCart[itemcode].qty === 0) {
+                delete updatedCart[itemcode];
+            }
+        } else {
+            updatedCart[itemcode] = { qty: Math.max(qty - decrement, 0), price, name, image1 };
+        }
+    
+        setCart(updatedCart);
+        saveCart(updatedCart);
+    
+        // Save cart to MongoDB
+        if (session?.user?.email) {
+            try {
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_email: session.user.email,
+                        cart: updatedCart,
+                    }),
+                });
+    
+                if (response.ok) {
+                    // Handle success if needed
+                } else {
+                    const data = await response.json();
+                    // Handle error if needed
+                }
+            } catch (error) {
+                console.error('Failed to save cart:', error);
+            }
+        }
+    };
+    
     
     const removeItem = async (itemcode, qty, description, price, name, size, variant, image1) => {
         const updatedCart = { ...cart };
