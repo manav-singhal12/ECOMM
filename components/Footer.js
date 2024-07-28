@@ -17,12 +17,12 @@ const Footer = () => {
           <div className="w-full md:w-1/4 mb-4">
             <h3 className="text-xl font-bold mb-3">Categories</h3>
             <ul>
-              <li><Link href="/product/Men"><div className="text-black hover:text-customPink">Men</div></Link></li>
-              <li><Link href="/product/Women"><div className="text-black hover:text-customPink">Women</div></Link></li>
-              <li><Link href="/product/Accessories"><div className="text-black hover:text-customPink">Accessories</div></Link></li>
+              <li><Link href="/categories/Men"><div className="text-black hover:text-customPink">Men</div></Link></li>
+              <li><Link href="/categories/Women"><div className="text-black hover:text-customPink">Women</div></Link></li>
+              <li><Link href="/categories/Accessories"><div className="text-black hover:text-customPink">Accessories</div></Link></li>
 
-              <li><Link href="/product/Shoes"><div className="text-black hover:text-customPink">Shoes</div></Link></li>
-              <li><Link href="/product/Clothing"><div className="text-black hover:text-customPink">Clothing</div></Link></li>
+              <li><Link href="/categories/Shoes"><div className="text-black hover:text-customPink">Shoes</div></Link></li>
+              <li><Link href="/categories/Clothing"><div className="text-black hover:text-customPink">Clothing</div></Link></li>
               {/* Add more categories or subcategories */}
             </ul>
           </div>

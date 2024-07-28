@@ -19,7 +19,7 @@ const Login = () => {
   useEffect(() => {
     // getData()
     if (session) {
-      router.push('/cart')
+      router.push('/categories')
     }
   }, [router, session])
   const handleSubmit = async (e) => {
@@ -34,7 +34,8 @@ const Login = () => {
     if (result.error) {
       setError(result.error);
     } else {
-      router.push('/cart'); // Redirect to the dashboard or any other page on successful login
+      window.location.reload();
+      router.push('/categories'); // Redirect to the dashboard or any other page on successful login
     }
   };
 

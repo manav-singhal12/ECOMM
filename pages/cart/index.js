@@ -5,104 +5,248 @@ import { Bounce } from 'react-toastify';
 import Link from 'next/link';
 import 'react-toastify/dist/ReactToastify.css';
 import Head from 'next/head';
+import { useSession } from 'next-auth/react';
+import axios from 'axios';
+
 export const metadata = {
-    title: "Looks-Your cart",
-    description: "Find best styling products from here",
-  };
+    title: "Looks - Your Cart",
+    description: "Find best styling items from here",
+};
+
 const Cart = () => {
-    const [cart, setCart] = useState({});
+    const [cart, setCart] = useState({}); // Initialize cart as an empty object
     const [subTotal, setSubTotal] = useState(0);
+    const { data: session } = useSession();
 
-    
-
-    
-
-   
     useEffect(() => {
-        try {
-            if (localStorage.getItem('cart')) {
-                setCart(JSON.parse(localStorage.getItem('cart')));
-            }
-        } catch (error) {
-            console.error(error);
-            localStorage.clear();
+        if (session) {
+            axios.get('/api/cart/get')
+                .then(response => {
+                    setCart(response.data.cart || {}); // Ensure cart is an object
+                    calculateSubtotal(response.data.cart || {});
+                    // console.log(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching cart:', error);
+                });
         }
-    }, []);
+    }, [session]);
 
-    const saveCart = (myCart) => {
-        localStorage.setItem('cart', JSON.stringify(myCart));
+    const calculateSubtotal = (cart) => {
         let subt = 0;
-        let keys = Object.keys(myCart);
-        for (let i = 0; i < keys.length; i++) {
-            subt += myCart[keys[i]].price * myCart[keys[i]].qty;
-        }
+        Object.values(cart).forEach(item => {
+            subt += item.price * item.qty;
+        });
         setSubTotal(subt);
     };
 
-    const addItem = (itemcode, qty) => {
-        let myCart = JSON.parse(JSON.stringify(cart));
-
-        if (itemcode in myCart) {
-            myCart[itemcode].qty = myCart[itemcode].qty + 1;
+    const saveCart = (myCart) => {
+        localStorage.setItem("cart", JSON.stringify(myCart));
+      };
+    
+    const addToCart = async (itemcode, qty, description, price, name, size, variant, image1) => {
+        const updatedCart = { ...cart };
+        if (itemcode in updatedCart) {
+          updatedCart[itemcode].qty += 5;
         } else {
-            myCart[itemcode] = { qty: qty }; // Initialize the item if it doesn't exist
+          updatedCart[itemcode] = { qty, price, name, image1 };
         }
-
-        setCart(myCart);
-        saveCart(myCart);
-    };
-
-    const removeFromCart = (itemcode, qty, description, price, name, size, variant, image1) => {
-        let myCart = JSON.parse(JSON.stringify(cart));
-        if (itemcode in cart) {
-            myCart[itemcode].qty = cart[itemcode].qty - 1;
+        setCart(updatedCart);
+        saveCart(updatedCart);
+    
+        // Save cart to MongoDB
+        if (session?.user?.email) {
+          try {
+            const response = await fetch('/api/cart/add', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                user_email: session.user.email,
+                cart: updatedCart,
+              }),
+            });
+    
+            if (response.ok) {
+            } else {
+              const data = await response.json();
+            }
+          } catch (error) {
+            console.error('Failed to save cart:', error);
+          }
         }
-        if (myCart[itemcode].qty <= 0) {
-            delete myCart[itemcode];
+      };
+    
+      const removefromCart = async (itemcode, qty, description, price, name, size, variant, image1) => {
+        const updatedCart = { ...cart };
+        
+        if (itemcode in updatedCart) {
+            updatedCart[itemcode].qty = Math.max(updatedCart[itemcode].qty - 5, 0);
+            if (updatedCart[itemcode].qty === 0) {
+                delete updatedCart[itemcode];
+            }
+        } else {
+            updatedCart[itemcode] = { qty: Math.max(qty - 5, 0), price, name, image1 };
         }
-        setCart(myCart);
-        saveCart(myCart);
+        
+        setCart(updatedCart);
+        saveCart(updatedCart);
+    
+        if (session?.user?.email) {
+            try {
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_email: session.user.email,
+                        cart: updatedCart,
+                    }),
+                });
+    
+                if (response.ok) {
+                } else {
+                    const data = await response.json();
+                }
+            } catch (error) {
+                console.error('Failed to save cart:', error);
+            }
+        }
     };
+    
+    const removeItem = async (itemcode, qty, description, price, name, size, variant, image1) => {
+        const updatedCart = { ...cart };
+        
+        if (itemcode in updatedCart) {
+            updatedCart[itemcode].qty = 0;
+            delete updatedCart[itemcode];
+        } else {
+            updatedCart[itemcode] = { qty, price, name, image1 };
+        }
+        
+        setCart(updatedCart);
+        saveCart(updatedCart);
+    
+        if (session?.user?.email) {
+            try {
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_email: session.user.email,
+                        cart: updatedCart,
+                    }),
+                });
+    
+                if (response.ok) {
+                    toast('Item removed from cart', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        transition: Bounce,
+                    });
+                } else {
+                    const data = await response.json();
+                    toast.error(`Failed to save cart: ${data.message}`, {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        transition: Bounce,
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to save cart:', error);
+                toast.error('Failed to save cart.', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    transition: Bounce,
+                });
+            }
+        }
+    };
+    
+    
 
-    const removeCart = (itemcode) => {
-        let myCart = JSON.parse(JSON.stringify(cart));
-        delete myCart[itemcode];
-        setCart(myCart);
-        saveCart(myCart);
-        toast('Product Removed Successfully', {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'light',
-            transition: Bounce,
-        });
+      const clearCart = async () => {
+        const emptyCart = {};
+        setCart(emptyCart);
+        saveCart(emptyCart);
+    
+        if (session?.user?.email) {
+            try {
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_email: session.user.email,
+                        cart: emptyCart,
+                    }),
+                });
+    
+                if (response.ok) {
+                    setCart(emptyCart);
+                    setSubTotal(0);
+                    toast('All items removed from cart', {
+                        position: 'top-right',
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: 'light',
+                        transition: Bounce,
+                    });
+                } else {
+                    const data = await response.json();
+                    toast.error(`Failed to clear cart: ${data.message}`, {
+                        position: 'top-right',
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        transition: Bounce,
+                    });
+                }
+            } catch (error) {
+                console.error('Error clearing cart:', error);
+                toast.error('Failed to clear cart.', {
+                    position: 'top-right',
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    transition: Bounce,
+                });
+            }
+        }
     };
-
-    const clearCart = () => {
-        setCart({});
-        saveCart({});
-        toast('All items removed', {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'light',
-            transition: Bounce,
-        });
-    };
+    
 
     return (
-        <><Head>
-        <title>Your Cart</title>
-        <meta name="description" content="Contact us to learn more about our clothing products." />
-      </Head>
+        <>
+            <Head>
+                <title>Your Cart</title>
+                <meta name="description" content="View and manage your cart." />
+            </Head>
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -117,97 +261,105 @@ const Cart = () => {
             />
             <div>
                 {Object.keys(cart).length === 0 && (
-                    <p1 className="flex justify-center items-center my-4 text-xl font-semibold text-customPink">
+                    <p className="flex justify-center cart-center my-4 text-xl font-semibold text-customPink">
                         No items in the cart
-                    </p1>
+                    </p>
                 )}
 
-                {Object.keys(cart).map((k) => (
-                    <div
-                        key={k}
-                        className="flex flex-col md:flex-row gap-14 h-auto md:h-[30vh] border-2 my-4 mx-2 md:mx-20 rounded-lg shadow-2xl p-4"
-                    >
-                        <Image
-                            className="h-[20vh] md:h-auto w-full md:w-[20vw] object-contain"
-                            width={420}
-                            height={420}
-                            quality={100}
-                            src={cart[k].image1}
-                            alt="Product Image 1"
-                        />
-                        <div className="flex flex-col w-full md:w-auto p-2">
-                            <p className="text-customPink text-2xl font-semibold mb-2">{cart[k].name}</p>
-                            <div className="flex flex-col md:flex-row gap-10 text-xl mb-4">
-                                <p className="mt-2">Rs. {cart[k].price}</p>
-                                <div className="flex items-center">
-                                    <p className="mt-2 mr-2">Quantity:</p>
-                                    <button
-                                        className="text-customPink text-3xl font-semibold flex justify-center items-center mx-2"
-                                        onClick={() =>
-                                            removeFromCart(
-                                                k,
-                                                1,
-                                                cart[k].description,
-                                                cart[k].price,
-                                                cart[k].name,
-                                                cart[k].size,
-                                                cart[k].color,
-                                                cart[k].image1
-                                            )
-                                        }
-                                    >
-                                        -
-                                    </button>
-                                    <p className="mt-1 text-customPink">{cart[k].qty}</p>
-                                    <button
-                                        className="text-customPink text-3xl font-semibold flex justify-center items-center mx-2"
-                                        onClick={() => addItem(k, cart[k].qty + 1)}
-                                    >
-                                        +
-                                    </button>
+                {Object.keys(cart).map((key) => {
+                    const item = cart[key];
+                    return (
+                        <div
+                            key={key}
+                            className="flex flex-col md:flex-row gap-14 h-auto md:h-[30vh] border-2 my-4 mx-2 md:mx-20 rounded-lg shadow-2xl p-4"
+                        >
+                            <Image
+                                className="h-[20vh] md:h-auto w-full md:w-[20vw] object-contain"
+                                width={420}
+                                height={420}
+                                quality={100}
+                                src={item.image1}
+                                alt="item Image"
+                            />
+                            <div className="flex flex-col w-full md:w-auto p-2">
+                                <p className="text-customPink text-2xl font-semibold mb-2">{item.name}</p>
+                                <div className="flex flex-col md:flex-row gap-10 text-xl mb-4">
+                                    <p className="mt-2">Rs. {item.price}</p>
+                                    <div className="flex cart-center">
+                                        <p className="mt-2 mr-2">Quantity:</p>
+                                        <button
+                                            className="text-customPink text-3xl font-semibold flex justify-center cart-center mx-2"
+                                            onClick={() => removefromCart(key, item.qty, item.description, item.price, item.name, "S", "M", item.image1)}
+                                        >
+                                            -
+                                        </button>
+                                        <p className="mt-1 text-customPink">{item.qty}</p>
+                                        <button
+                                            className="text-customPink text-3xl font-semibold flex justify-center cart-center mx-2"
+                                            onClick={() => addToCart(key, item.qty, item.description, item.price, item.name, "S", "M", item.image1)}
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                    <p className="text-customPink font-semibold mt-2 md:ml-auto">
+                                        Total Price: ₹{(item.qty * item.price).toFixed(2)}
+                                    </p>
                                 </div>
-                                <p className="text-customPink font-semibold mt-2 md:ml-auto">
-                                    Total Price: ₹{(cart[k].qty * cart[k].price).toFixed(2)}
-                                </p>
-                            </div>
-                            <div className="flex gap-10 mt-4">
+                                <div className="flex w-full justify-between">
                                 <button
-                                    className="text-xl font-semibold border-2 border-customPink rounded-md p-2 text-customPink hover:bg-customPink hover:text-white my-2 w-full md:w-60"
-                                    onClick={() => removeCart(k)}
+                                    onClick={() => removeItem(key, item.qty, item.description, item.price, item.name, "S", "M", item.image1)}
+                                    className="bg-red-500 text-white py-2 px-4 rounded mt-2"
                                 >
-                                    Remove From Cart
+                                    Remove Item
                                 </button>
                                 <Link
-                                    href={{
-                                        pathname: '/order',
-                                        query: {
-                                            itemcode: k,
-                                            qty: cart[k].qty,
-                                            description: cart[k].description,
-                                            price: cart[k].price,
-                                            name: cart[k].name,
-                                            size: 'S', // Example size, adjust as needed
-                                            variant: 'M', // Example variant, adjust as needed
-                                            image1: cart[k].image1,
-                                            total:cart[k].qty*cart[k].price
-                                        },
-                                    }}
-                                    passHref
-                                >
-                                    <span className="text-xl font-semibold border-2 flex justify-center border-customPink rounded-md p-2 text-customPink hover:bg-customPink hover:text-white my-2 w-full md:w-60">
-                                        Buy Now
-                                    </span>
-                                </Link>
+                href={{
+                  pathname: '/order',
+                  query: {
+                    itemcode: item.id,
+                    qty: item.qty,
+                    description: item.description,
+                    price: item.price,
+                    name: item.name,
+                    size: 'S', // Example size, adjust as needed
+                    variant: 'M', // Example variant, adjust as needed
+                    image1: item.image1,
+                  },
+                }}
+                passHref
+              >
+                <button className='bg-green-500 text-white py-2 px-4 rounded mt-2'>Buy Now</button>
+              </Link>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
+                {Object.keys(cart).length > 0 && (
+                    <div className="flex justify-center h-16  mx-2 md:mx-20 mt-6">
+                        <button
+                            onClick={clearCart}
+                            className="bg-red-500 text-white py-2 px-4 rounded"
+                        >
+                            Clear Cart
+                        </button></div>)}
 
-                {Object.keys(cart).length !== 0 && (
-                    <div className="flex justify-center border-2 border-customPink rounded-lg text-customPink hover:bg-customPink hover:text-white h-10 w-44 mx-auto font-semibold text-xl mt-10 my-10">
-                        <button onClick={clearCart}>Clear Cart</button>
+                {/* {Object.keys(cart).length > 0 && (
+                    <div className="flex justify-between mx-2 md:mx-20 mt-4">
+                        <button
+                            onClick={clearCart}
+                            className="bg-red-500 text-white py-2 px-4 rounded"
+                        >
+                            Clear Cart
+                        </button>
+                        <div className="text-xl font-semibold">
+                            <p>Subtotal: ₹{subTotal.toFixed(2)}</p>
+                            <Link href="/checkout"
+                                className="bg-green-500 text-white py-2 px-4 rounded mt-2 inline-block">Proceed to Checkout
+                            </Link>
+                        </div>
                     </div>
-                )}
+                )} */}
             </div>
         </>
     );

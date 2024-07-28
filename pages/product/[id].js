@@ -33,10 +33,9 @@ export default function ProductPage() {
       const foundProduct = productData.find(product => product.id === parseInt(id));
       if (foundProduct) {
         setProduct(foundProduct);
-        setSizes(foundProduct.sizes || []); // Set sizes if available
+        setSizes(foundProduct.sizes || []);
       } else {
-        setProduct(null);
-        console.log(`Product with ID ${id} not found`);
+        console.error(`Product with ID ${id} not found`);
       }
       setLoading(false);
     }
@@ -44,12 +43,13 @@ export default function ProductPage() {
 
   useEffect(() => {
     try {
-      if (localStorage.getItem("cart")) {
-        setCart(JSON.parse(localStorage.getItem("cart")));
+      const savedCart = localStorage.getItem("cart");
+      if (savedCart) {
+        setCart(JSON.parse(savedCart));
       }
     } catch (error) {
-      console.error(error);
-      localStorage.clear();
+      console.error("Failed to parse cart from localStorage:", error);
+      localStorage.removeItem("cart");
     }
   }, []);
 
@@ -57,33 +57,70 @@ export default function ProductPage() {
     localStorage.setItem("cart", JSON.stringify(myCart));
   };
 
-  const addToCart = (itemcode, qty, description, price, name, size, variant, image1) => {
-    let newCart = { ...cart };
-    if (itemcode in newCart) {
-      newCart[itemcode].qty += qty;
+  const addToCart = async (itemcode, qty, description, price, name, size, variant, image1) => {
+    const updatedCart = { ...cart };
+    if (itemcode in updatedCart) {
+      updatedCart[itemcode].qty += qty;
     } else {
-      newCart[itemcode] = { qty, price, name, image1 };
+      updatedCart[itemcode] = { qty, price, name, image1 };
     }
-    setCart(newCart);
-    saveCart(newCart);
-    toast('Item Added to Bag', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
-    });
+    setCart(updatedCart);
+    saveCart(updatedCart);
+
+    // Save cart to MongoDB
+    if (session?.user?.email) {
+      try {
+        const response = await fetch('/api/cart/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_email: session.user.email,
+            cart: updatedCart,
+          }),
+        });
+
+        if (response.ok) {
+          toast('Item Added to Bag', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            transition: Bounce,
+          });
+        } else {
+          const data = await response.json();
+          toast.error(`Failed to save cart: ${data.message}`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            transition: Bounce,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to save cart:', error);
+        toast.error('Failed to save cart.', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          transition: Bounce,
+        });
+      }
+    }
   };
 
   if (loading) return <div>Loading...</div>;
 
-  if (!product) {
-    return <div>Product not found</div>;
-  }
+  if (!product) return <div>Product not found</div>;
 
   const getImageUrl = () => {
     switch (imageIndex) {
@@ -96,7 +133,6 @@ export default function ProductPage() {
     }
   };
 
-  // Determine quantity based on session user name
   const quantity = session?.user?.email.endsWith('@looks') ? 5 : 1;
 
   return (
@@ -114,8 +150,8 @@ export default function ProductPage() {
         theme="light"
       />
       <Head>
-        <title>Explore the product</title>
-        <meta name="description" content="Contact us to learn more about our clothing products." />
+        <title>{product.name}</title>
+        <meta name="description" content={product.description || "Explore this product on our site."} />
       </Head>
       <div className="flex flex-col lg:flex-row my-4">
         {/* Left Section - Product Images */}
@@ -126,7 +162,6 @@ export default function ProductPage() {
                 className="my-2 h-20 w-20 cursor-pointer object-contain"
                 width={120}
                 height={120}
-                // quality={100}
                 src={product.image1}
                 alt="Product Image 1"
                 onClick={() => setImageIndex(0)}
@@ -136,7 +171,6 @@ export default function ProductPage() {
                   className="my-2 h-20 w-20 cursor-pointer object-contain"
                   width={120}
                   height={120}
-                  // quality={100}
                   src={product.image2}
                   alt="Product Image 2"
                   onClick={() => setImageIndex(1)}
@@ -147,7 +181,6 @@ export default function ProductPage() {
                   className="my-2 h-20 w-20 cursor-pointer object-contain"
                   width={120}
                   height={120}
-                  // quality={100}
                   src={product.image3}
                   alt="Product Image 3"
                   onClick={() => setImageIndex(2)}
@@ -163,18 +196,40 @@ export default function ProductPage() {
             />
           </div>
           <div className="flex gap-8 mt-6">
-            <button className="border-2 border-customPink text-customPink p-2 flex justify-center items-center">
-              <lord-icon
-                src="https://cdn.lordicon.com/ulnswmkk.json"
+          <div className="buynow h-16 border-2 border-customPink flex justify-center items-center text-xl text-customPink font-semibold hover:bg-customPink hover:text-white cursor-pointer mt-4 ml-10 w-36  rounded-lg">
+              <lord-icon className='icon-hover'
+                src="https://cdn.lordicon.com/pbrgppbb.json"
                 trigger="hover"
                 colors="primary:#EB3963"
-                style={{ width: '18px', height: '18px' }}
-              ></lord-icon>
-              Add to Favourite
-            </button>
+                style={{ width: '25px', height: '25px' }}
+              />
+              <style jsx>{`
+                .icon-hover:hover {
+                  filter: brightness(1.1); 
+                }
+              `}</style>
+              <Link
+                href={{
+                  pathname: '/order',
+                  query: {
+                    itemcode: product.id,
+                    qty: quantity,
+                    description: product.description,
+                    price: product.price,
+                    name: product.name,
+                    size: 'S', // Example size, adjust as needed
+                    variant: 'M', // Example variant, adjust as needed
+                    image1: product.image1,
+                  },
+                }}
+                passHref
+              >
+                <span>Buy Now</span>
+              </Link>
+            </div>
             <button 
               onClick={() => addToCart(product.id, quantity, product.description, product.price, product.name, "S", "M", product.image1)} 
-              className="border-2 border-customPink bg-customPink text-white p-2 flex gap-1 justify-center items-center"
+              className="border-2 border-customPink bg-customPink text-white px-2 flex gap-1 justify-center items-center h-18"
             >
               <lord-icon
                 src="https://cdn.lordicon.com/mqdkoaef.json"
@@ -222,7 +277,7 @@ export default function ProductPage() {
               </div>
             </div>
             
-            <div className="buynow h-14 border-2 border-customPink flex justify-center items-center text-xl text-customPink font-semibold hover:bg-customPink hover:text-white cursor-pointer mt-4 ml-10 w-36 rounded-lg">
+            {/* <div className="buynow h-14 border-2 border-customPink flex justify-center items-center text-xl text-customPink font-semibold hover:bg-customPink hover:text-white cursor-pointer mt-4 ml-10 w-36 rounded-lg">
               <lord-icon className='icon-hover'
                 src="https://cdn.lordicon.com/pbrgppbb.json"
                 trigger="hover"
@@ -252,11 +307,10 @@ export default function ProductPage() {
               >
                 <span>Buy Now</span>
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
     </>
   );
 }
-  

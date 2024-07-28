@@ -60,7 +60,9 @@ const Signup = () => {
       });
 
       if (signInResponse.ok) {
-        router.push('/cart'); // Redirect to cart on successful signup and signin
+        router.push('/categories'); // Redirect to cart on successful signup and signin
+
+        window.location.reload();
       } else {
         console.error('Error signing in:', signInResponse.error);
       }
@@ -76,7 +78,7 @@ const Signup = () => {
 
   useEffect(() => {
     if (session) {
-      router.push('/cart');
+      router.push('/categories');
     }
   }, [router, session]);
 

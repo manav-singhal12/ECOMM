@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -6,9 +6,12 @@ import './Navbar.css'; // Ensure your custom CSS is properly imported
 import { useSession, signIn, signOut } from "next-auth/react";
 import { SessionProvider } from 'next-auth/react';
 import SessionWrapper from './SessionWrapper';
+import productsData from '@/public/products.json'; // Import your products data
 
 const Navbar = () => {
     const [searchVisible, setSearchVisible] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false); // State for dropdown menu
     const { data: session } = useSession();
 
@@ -27,11 +30,32 @@ const Navbar = () => {
             document.body.removeChild(script);
         };
     }, []);
+
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
+
+    const handleSignOut = () => {
+        // Clear cart from localStorage
+        localStorage.removeItem('cart');
+        // Sign out
+        signOut();
+    };
+
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+        if (e.target.value === "") {
+            setSearchResults([]);
+        } else {
+            const filteredProducts = productsData.filter(product =>
+                product.name.toLowerCase().includes(e.target.value.toLowerCase())
+            );
+            setSearchResults(filteredProducts);
+        }
+    };
+
     return (
         <nav className='nav flex flex-wrap justify-between items-center w-full bg-sky-200 sticky top-0 p-4 z-50'>
             <ul className='flex flex-wrap gap-4 md:gap-10 items-center w-full md:w-auto'>
@@ -46,32 +70,37 @@ const Navbar = () => {
                 
                 <li>
                     <Link href='/categories' className='cursor-pointer font-semibold text-red-500 text-sm md:text-xl hover:text-red-600 hover:font-bold'>Categories</Link>
-                </li><li>
+                </li>
+                <li>
                     <Link href='/about' className='cursor-pointer font-semibold text-red-500 text-sm md:text-xl hover:text-red-600 hover:font-bold'>About Us</Link>
                 </li>
                 <li>
                     <Link href='/contact' className='cursor-pointer font-semibold text-red-500 text-sm md:text-xl hover:text-red-600 hover:font-bold'>Contact Us</Link>
                 </li>
             </ul>
-            <div className="side flex  gap-4  md:gap-6 items-center mt-4 md:mt-0  md:w-auto">
+            <div className="side flex gap-4 md:gap-6 items-center mt-4 md:mt-0 md:w-auto">
                 <div className="search flex items-center gap-2 w-full md:w-auto">
-                    {/* <div className={`search-container ${searchVisible ? 'visible' : ''} w-full md:w-auto`}>
-                <input
-                  type="text"
-                  className="p-2 border-2 border-black rounded w-full bg-sky-100 text-black"
-                  placeholder="Search..."
-                />
-              </div>
-              <div className="searchicon flex flex-col cursor-pointer" onClick={toggleSearch}>
-                <lord-icon
-                  src="https://cdn.lordicon.com/fkdzyfle.json"
-                  trigger="hover"
-                  style={{ width: '25px', height: '25px' }}
-                />
-                <p className='text-sm'>Search</p>
-              </div> */}
+                    
+                    <div className={`search-container ${searchVisible ? 'visible' : ''} w-full md:w-auto`}>
+                        <input
+                            type="text"
+                            className="p-2 border-2 border-black rounded w-full bg-sky-100 text-black"
+                            placeholder="Search..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                        />
+                    </div>
+                    <div className="searchicon flex flex-col cursor-pointer" onClick={toggleSearch}>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/fkdzyfle.json"
+                            trigger="hover"
+                            style={{ width: '25px', height: '25px' }}
+                        />
+                        <p className='text-sm'>Search</p>
+                    </div>
+                   
                     <Link href='/cart'>
-                        <div className="cart flex flex-col cursor-pointer ">
+                        <div className="cart flex flex-col cursor-pointer">
                             <lord-icon
                                 src="https://cdn.lordicon.com/pbrgppbb.json"
                                 trigger="hover"
@@ -109,7 +138,7 @@ const Navbar = () => {
                                 </li>
                                 <li>
                                     <button
-                                        onClick={() => signOut()}
+                                        onClick={handleSignOut}
                                         className="block w-full text-left px-4 py-2 hover:bg-customPink text-customPink text-semibold dark:hover:bg-customPink dark:hover:text-white"
                                     >
                                         Sign out
@@ -121,8 +150,7 @@ const Navbar = () => {
                 ) : (
                     <div className="icons flex gap-4 md:gap-6 w-full md:w-auto">
                         <div className="user flex flex-col cursor-pointer">
-                            <button onClick={toggleDropdown}
-                            >
+                            <button onClick={toggleDropdown}>
                                 <lord-icon
                                     src="https://cdn.lordicon.com/hrjifpbq.json"
                                     trigger="hover"
@@ -146,9 +174,23 @@ const Navbar = () => {
                     </div>
                 )}
             </div>
+            {searchVisible && (
+                <div className="search-results absolute w-20 bg-white shadow-lg rounded-lg mt-2 z-10">
+                    {searchResults.length > 0 ? (
+                        searchResults.map((product) => (
+                            <Link key={product.id} href={`/product/${product.id}`}>
+                                <div className="p-2 border-b hover:bg-gray-100 cursor-pointer">
+                                    {product.name}
+                                </div>
+                            </Link>
+                        ))
+                    ) : (
+                        <div className="p-2 w-20 text-gray-500">No results found.</div>
+                    )}
+                </div>
+            )}
         </nav>
     );
-
 }
 
 export default SessionWrapper(Navbar);
