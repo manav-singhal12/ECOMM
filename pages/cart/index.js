@@ -16,24 +16,19 @@ export const metadata = {
 const Cart = () => {
     const [cart, setCart] = useState({}); // Initialize cart as an empty object
     const [subTotal, setSubTotal] = useState(0);
-    const { data: session,status } = useSession();
+    const { data: session } = useSession();
 
     useEffect(() => {
-        if (status === 'authenticated') {
-            // Fetch cart data
             axios.get('/api/cart/get')
                 .then(response => {
-                    setCart(response.data.cart || {});
+                    setCart(response.data.cart || {}); // Ensure cart is an object
                     calculateSubtotal(response.data.cart || {});
+                    // console.log(response.data);
                 })
                 .catch(error => {
                     console.error('Error fetching cart:', error);
                 });
-        } else if (status === 'unauthenticated') {
-            // Handle unauthenticated state
-            console.log('User is not authenticated');
-        }
-    }, [session,status]);
+    }, [session]);
 
     const calculateSubtotal = (cart) => {
         let subt = 0;
