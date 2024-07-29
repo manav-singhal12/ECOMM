@@ -1,4 +1,3 @@
-// pages/login.js
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
@@ -16,6 +15,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false); // Loader state
+  const [passwordVisible, setPasswordVisible] = useState(false); // Password visibility state
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -65,14 +65,23 @@ const Login = () => {
               className="border-2 rounded-xl p-1 text-black px-2 bg-none border-customPink focus:border-customPink focus:outline-customPink"
               required
             />
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="border-2 rounded-xl p-1 text-black px-2 bg-none border-customPink focus:border-customPink focus:outline-customPink"
-              required
-            />
+            <div className="relative">
+              <input
+                type={passwordVisible ? 'text' : 'password'}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="border-2 rounded-xl p-1 w-full text-black px-2 bg-none border-customPink focus:border-customPink focus:outline-customPink"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setPasswordVisible(prev => !prev)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              >
+                {passwordVisible ? 'Hide' : 'Show'}
+              </button>
+            </div>
             <button
               type="submit"
               className="border-pink-400 border-2 mb-4 p-2 font-semibold text-lg text-white cursor-pointer bg-customPink rounded-xl"

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
-import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Loader from '@/components/Loader';
@@ -17,6 +16,7 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState({ name: '', email: '', password: '', general: '' });
   const [loading, setLoading] = useState(false); // Loader state
+  const [passwordVisible, setPasswordVisible] = useState(false); // Password visibility state
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -124,15 +124,22 @@ const Signup = () => {
               />
               {error.email && <p className="text-red-500">{error.email}</p>}
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 relative">
               <input
-                type="password"
+                type={passwordVisible ? 'text' : 'password'}
                 placeholder="Enter your password"
                 name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="border-2 rounded-xl p-1 text-black px-2 bg-none border-customPink focus:border-customPink focus:outline-customPink"
               />
+              <button
+                type="button"
+                onClick={() => setPasswordVisible(prev => !prev)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              >
+                {passwordVisible ? 'Hide' : 'Show'}
+              </button>
               {error.password && <p className="text-red-500">{error.password}</p>}
             </div>
             {error.general && <p className="text-red-500">{error.general}</p>}

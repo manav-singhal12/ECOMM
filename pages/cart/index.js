@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Head from 'next/head';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-
+import { useRouter } from 'next/router';
 export const metadata = {
     title: "Looks - Your Cart",
     description: "Find best styling items from here",
@@ -16,7 +16,8 @@ export const metadata = {
 const Cart = () => {
     const [cart, setCart] = useState({}); // Initialize cart as an empty object
     const [subTotal, setSubTotal] = useState(0);
-    const { data: session } = useSession();
+    const { data: session,status } = useSession();
+    const router = useRouter();
 
     useEffect(() => {
         if (session && session.user.email) {
@@ -34,7 +35,11 @@ const Cart = () => {
                 });
         }
     }, [session]);
-
+    useEffect(() => {
+        if (!session && status !== "loading") {
+          router.push('/signup');
+        }
+      }, [router, session, status]);
     // const calculateSubtotal = (cart) => {
     //     let subt = 0;
     //     Object.values(cart).forEach(item => {

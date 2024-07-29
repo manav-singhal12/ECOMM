@@ -72,14 +72,15 @@ export default function CategoryPage() {
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
+                <Link href={`/product/${product.id}`}>
                 <div key={product.id} className='border border-gray-500 rounded-lg p-4'>
                   <div className='relative h-60'>
                     <Image src={product.image1} alt={product.name} layout='fill' objectFit='cover' className='rounded-lg' />
                   </div>
                   <div className='mt-4'>
-                    <Link href={`/product/${product.id}`}>
+                    
                       <div className='text-lg font-semibold hover:text-customPink'>{product.name}</div>
-                    </Link>
+                    
                     <div className='flex justify-between items-center mt-2'>
                       <p className='text-xl text-pink-500 font-semibold'>₹{product.price}</p>
                       {product.discount > 0 && (
@@ -90,7 +91,7 @@ export default function CategoryPage() {
                       )}
                     </div>
                   </div>
-                </div>
+                </div></Link>
               ))
             ) : (
               <p className='text-lg text-gray-500'>No products found</p>

@@ -42,18 +42,22 @@ const Navbar = () => {
         // Sign out
         signOut();
     };
-
     const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
-        if (e.target.value === "") {
+        const searchTerm = e.target.value.toLowerCase(); // Convert search term to lowercase
+        setSearchTerm(searchTerm);
+        
+        if (searchTerm === "") {
             setSearchResults([]);
         } else {
-            const filteredProducts = productsData.filter(product =>
-                product.name.includes(e.target.value)
-            );
+            const filteredProducts = productsData.filter(product => {
+                const productName = product.name ? product.name.toString().toLowerCase() : ""; // Ensure product name is a string
+                return productName.includes(searchTerm);
+            });
             setSearchResults(filteredProducts);
         }
     };
+    
+    
 
     const handleSearchResultClick = (productId) => {
         // Navigate to the product page
@@ -177,7 +181,7 @@ const Navbar = () => {
                 )}
             </div>
             {searchVisible && (
-    <div className="search-results w-[20vw] absolute lg:left-[63vw] lg:top-[8vh] top-[11vh]  sm:top-[10vh]  md:left-10 md:top-28 bg-gray-500 text-white rounded-lg shadow-lg">
+    <div className="search-results w-[20vw] absolute lg:left-[76vw] lg:top-[8vh] top-[11vh]  sm:top-[10vh]  md:left-10 md:top-28 bg-gray-500 text-white rounded-lg shadow-lg">
         {searchResults.length > 0 ? (
             searchResults.map((product) => (
                 <div 
