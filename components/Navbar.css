@@ -26,3 +26,27 @@
 .search-container.visible {
     display: block;
 }
+.search-results {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.search-results div {
+    transition: background-color 0.2s;
+}
+
+.search-results div:hover {
+    background-color: #f0f0f0;
+}
+
+.search-container {
+    position: relative;
+}
+
+.search-container.visible {
+    display: block;
+}
+
+.searchicon {
+    cursor: pointer;
+}

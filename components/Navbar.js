@@ -3,9 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import './Navbar.css'; // Ensure your custom CSS is properly imported
-import { useSession, signIn, signOut } from "next-auth/react";
-import { SessionProvider } from 'next-auth/react';
-import SessionWrapper from './SessionWrapper';
+import { useSession, signOut } from "next-auth/react";
 import productsData from '@/public/products.json'; // Import your products data
 
 const Navbar = () => {
@@ -51,10 +49,16 @@ const Navbar = () => {
             setSearchResults([]);
         } else {
             const filteredProducts = productsData.filter(product =>
-                product.name.toLowerCase().includes(e.target.value.toLowerCase())
+                product.name.includes(e.target.value)
             );
             setSearchResults(filteredProducts);
         }
+    };
+
+    const handleSearchResultClick = (productId) => {
+        // Navigate to the product page
+        window.location.href = `/product/${productId}`;
+        setSearchVisible(false);
     };
 
     return (
@@ -68,7 +72,6 @@ const Navbar = () => {
                 <li>
                     <Link href='/' className='cursor-pointer font-semibold text-red-500 text-sm md:text-xl hover:text-red-600 hover:font-bold'>Home</Link>
                 </li>
-                
                 <li>
                     <Link href='/categories' className='cursor-pointer font-semibold text-red-500 text-sm md:text-xl hover:text-red-600 hover:font-bold'>Categories</Link>
                 </li>
@@ -79,9 +82,8 @@ const Navbar = () => {
                     <Link href='/contact' className='cursor-pointer font-semibold text-red-500 text-sm md:text-xl hover:text-red-600 hover:font-bold'>Contact Us</Link>
                 </li>
             </ul>
-            <div className="side flex gap-4 md:gap-6 items-center mt-4 md:mt-0 md:w-auto">
-                <div className="search flex items-center gap-2 w-full md:w-auto">
-                    
+            <div className="side flex gap-4 md:gap-6 items-center w-96 mt-4 md:mt-0 md:w-auto relative">
+                <div className="search flex items-center gap-2 w-full md:w-auto relative">
                     <div className={`search-container ${searchVisible ? 'visible' : ''} w-full md:w-auto`}>
                         <input
                             type="text"
@@ -99,7 +101,6 @@ const Navbar = () => {
                         />
                         <p className='text-sm'>Search</p>
                     </div>
-                   
                     <Link href='/cart'>
                         <div className="cart flex flex-col cursor-pointer">
                             <lord-icon
@@ -176,17 +177,15 @@ const Navbar = () => {
                 )}
             </div>
             {searchVisible && (
-                <div className="search-results absolute w-20 bg-white shadow-lg rounded-lg mt-2 z-10">
+                <div className="search-results absolute top-[7vh] left-[64vw] w-full max-w-md bg-white shadow-lg rounded-lg mt-2 z-10 border border-gray-200">
                     {searchResults.length > 0 ? (
                         searchResults.map((product) => (
-                            <Link key={product.id} href={`/product/${product.id}`}>
-                                <div className="p-2 border-b hover:bg-gray-100 cursor-pointer">
-                                    {product.name}
-                                </div>
-                            </Link>
+                            <div key={product.id} className="p-3 border-b hover:bg-gray-100 cursor-pointer" onClick={() => handleSearchResultClick(product.id)}>
+                                {product.name}
+                            </div>
                         ))
                     ) : (
-                        <div className="p-2 w-20 text-gray-500">No results found.</div>
+                        <div className="p-3 text-center text-gray-600">No results found.</div>
                     )}
                 </div>
             )}
@@ -194,4 +193,4 @@ const Navbar = () => {
     );
 }
 
-export default SessionWrapper(Navbar);
+export default Navbar;
