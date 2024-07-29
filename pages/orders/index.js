@@ -74,7 +74,7 @@ console.log(orderList);
                     );
                 })}
               <div className="flex justify-center my-4">
-                  <Link href="/categories" className="bg-blue-500 text-white px-4 py-2 rounded">
+              <Link href="/categories" className="buynow h-10 border-2 flex justify-center items-center border-customPink text-lg text-customPink font-semibold hover:bg-customPink hover:text-white cursor-pointe mx-auto w-44 rounded-lg">
                       Continue Shopping
                   </Link>
               </div>

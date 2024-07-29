@@ -52,7 +52,7 @@ export default function CategoryDetailPage() {
   }
 
   return (
-    <div className='flex'>
+    <div className='flex min-h-[90vh]'>
       {/* Sidebar for categories */}
       <div className='w-1/4 border-r-2 border-2 m-2 border-gray-500'>
         <h1 className='font-semibold text-xl text-center py-4'>Categories</h1>

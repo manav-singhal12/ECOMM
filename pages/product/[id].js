@@ -165,7 +165,7 @@ export default function ProductPage() {
         <meta name="description" content={product.description || "Explore this product on our site."} />
       </Head>
       {loadingAction && <Loader />} {/* Show loader when performing actions */}
-      <div className="flex flex-col lg:flex-row my-4">
+      <div className="flex flex-col lg:flex-row my-4 min-h-[90vh]">
         {/* Left Section - Product Images */}
         <div className="lg:w-2/5 flex flex-col items-center justify-center mb-6 lg:mb-0">
           <div className="flex sm:flex-row items-center">

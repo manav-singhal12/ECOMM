@@ -372,6 +372,11 @@ const Cart = () => {
                         </div>
                     </div>
                 )} */}
+                <div className="flex justify-center my-4">
+                  <Link href="/categories" className="buynow h-10 border-2 flex justify-center items-center border-customPink text-lg text-customPink font-semibold hover:bg-customPink hover:text-white cursor-pointe mx-auto w-44 rounded-lg">
+                      Continue Shopping
+                  </Link>
+              </div>
             </div>
         </>
     );
