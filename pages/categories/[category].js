@@ -60,9 +60,9 @@ export default function CategoryDetailPage() {
           {categories.map((cat) => (
             <li key={cat} onClick={() => setSelectedCategory(cat)}>
               <Link href={cat === 'All' ? '/categories' : `/categories/${cat}`} passHref>
-                <div className={`block py-2 px-4 rounded-lg text-lg cursor-pointer ${selectedCategory === cat ? 'bg-pink-500 text-white' : 'hover:bg-gray-200'}`}>
+                <p className={`block py-2 px-4 rounded-lg text-lg cursor-pointer ${selectedCategory === cat ? 'bg-pink-500 text-white' : 'hover:bg-gray-200'}`}>
                   {cat}
-                </div>
+                </p>
               </Link>
             </li>
           ))}
@@ -75,26 +75,25 @@ export default function CategoryDetailPage() {
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
-              <Link href={`/product/${product.id}`}>
-              <div key={product.id} className='border border-gray-500 rounded-lg p-4'>
-                <div className='relative h-60'>
-                  <Image src={product.image1} alt={product.name} layout='fill' objectFit='cover' className='rounded-lg' />
-                </div>
-                <div className='mt-4'>
-                  
+              <Link key={product.id} href={`/product/${product.id}`} passHref>
+                <div className='block border border-gray-500 rounded-lg p-4'>
+                  <div className='relative h-60'>
+                    <Image src={product.image1} alt={product.name} layout='fill' objectFit='cover' className='rounded-lg' />
+                  </div>
+                  <div className='mt-4'>
                     <div className='text-lg font-semibold hover:text-customPink'>{product.name}</div>
-                  
-                  <div className='flex justify-between items-center mt-2'>
-                    <p className='text-xl text-pink-500 font-semibold'>₹{product.price}</p>
-                    {product.discount > 0 && (
-                      <div className='flex items-center'>
-                        <p className='text-sm line-through text-gray-500 mr-2'>₹{product.originalPrice}</p>
-                        <span className='bg-yellow-500 text-white px-2 py-1 rounded-md text-xs'>{product.discount}% off</span>
-                      </div>
-                    )}
+                    <div className='flex justify-between items-center mt-2'>
+                      <p className='text-xl text-pink-500 font-semibold'>₹{product.price}</p>
+                      {product.discount > 0 && (
+                        <div className='flex items-center'>
+                          <p className='text-sm line-through text-gray-500 mr-2'>₹{product.originalPrice}</p>
+                          <span className='bg-yellow-500 text-white px-2 py-1 rounded-md text-xs'>{product.discount}% off</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div></Link>
+              </Link>
             ))
           ) : (
             <p className='text-lg text-gray-500'>No products found in {category}</p>
