@@ -22,18 +22,17 @@ const orderItemSchema = new mongoose.Schema({
     image: {
         type: String,
         required: true
-    }
+    },date: {
+      type: Date,
+      default: Date.now,
+      required: true
+  }
 });
 
 const orderSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
-    },
-    date: {
-        type: Date,
-        default: Date.now,
         required: true
     },
     items: [orderItemSchema]

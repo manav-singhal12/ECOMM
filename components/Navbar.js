@@ -40,7 +40,7 @@ const Navbar = () => {
     const handleSignOut = () => {
         // Clear cart from localStorage
         localStorage.removeItem('cart');
-        localStorage.removeItem('orders');
+        localStorage.removeItem('order');
         // Sign out
         signOut();
     };

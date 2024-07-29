@@ -25,7 +25,7 @@ const Cart = () => {
                     setCart(response.data.cart || {}); // Ensure cart is an object
                     // calculateSubtotal(response.data.items || {});
                     console.log(session.user.email);
-                    console.log(response.data.items);
+                    console.log(response.data.cart);
                     // setLoading(false);
                 })
                 .catch(error => {

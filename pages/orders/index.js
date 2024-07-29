@@ -13,7 +13,7 @@ const Orders = () => {
             axios.get('/api/order/get', { params: { user_email: session.user.email } })
                 .then(response => {
                     setOrders(response.data.order || {}); // Ensure cart is an object
-                    calculateSubtotal(response.data.items || {});
+                    // calculateSubtotal(response.data.items || {});
                     console.log(session.user.email);
                     console.log(response.data.order);
                     // setLoading(false);
@@ -68,7 +68,7 @@ console.log(orderList);
                                         Total Price: ₹{(item.qty * item.price).toFixed(2)}
                                     </p>
                                 </div>
-                                <p>Ordered on {item.time}</p>
+                                <p>Ordered on {item.date}</p>
                             </div>
                         </div>
                     );

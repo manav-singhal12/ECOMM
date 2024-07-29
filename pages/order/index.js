@@ -45,8 +45,8 @@ const Order = () => {
     localStorage.setItem("order", JSON.stringify(myorder));
   };
 
-  const addToOrder = async (itemcode, qty, description, price, name, size, variant, image1) => {
-    const updatedorder = { ...order };
+  const addToOrder = async (itemcode, qty, description, price, name, size, variant, image1,) => {
+    const updatedOrder = { ...order };
     const formatDateTime = () => {
       const now = new Date();
       
@@ -67,15 +67,17 @@ const Order = () => {
     
     // Usage
     const currentDate = formatDateTime();
-    console.log(currentDate); // e.g., "7/26/2024 5:02:07 PM"
+    if (session?.user?.email) {
+      if (!updatedOrder[session.user.email]) {
+          updatedOrder[session.user.email] = {};
+      }
+      updatedOrder[currentDate] = { qty, description, price, name, size, variant, image1,date:currentDate };
+  }
     
-    
-      updatedorder[session.user.email] = { qty, price, name, image1,time: currentDate };  
-    
-    setOrder(updatedorder);
-    saveOrder(updatedorder);
+    setOrder(updatedOrder);
+    saveOrder(updatedOrder);
 
-    // Save order to MongoDB
+    // Save cart to MongoDB
     if (session?.user?.email) {
       try {
         const response = await fetch('/api/order/add', {
@@ -85,7 +87,7 @@ const Order = () => {
           },
           body: JSON.stringify({
             user_email: session.user.email,
-            order: updatedorder,
+            order: updatedOrder,
           }),
         });
 
@@ -101,7 +103,7 @@ const Order = () => {
           });
         } else {
           const data = await response.json();
-          toast.error(`Failed to save order: ${data.message}`, {
+          toast.error(`Failed to save cart: ${data.message}`, {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -112,8 +114,8 @@ const Order = () => {
           });
         }
       } catch (error) {
-        console.error('Failed to save order:', error);
-        toast.error('Failed to save order.', {
+        console.error('Failed to save cart:', error);
+        toast.error('Failed to save cart.', {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -125,6 +127,7 @@ const Order = () => {
       }
     }
   };
+
   return (
     <>
       <Head>
