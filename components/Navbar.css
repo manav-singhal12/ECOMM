@@ -35,9 +35,9 @@
     transition: background-color 0.2s;
 }
 
-.search-results div:hover {
+/* .search-results div:hover {
     background-color: #f0f0f0;
-}
+} */
 
 .search-container {
     position: relative;

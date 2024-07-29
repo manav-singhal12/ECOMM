@@ -7,7 +7,7 @@ import { useSession, signOut } from "next-auth/react";
 import productsData from '@/public/products.json'; // Import your products data
 import SessionWrapper from './SessionWrapper';
 const Navbar = () => {
-    const [searchVisible, setSearchVisible] = useState(true);
+    const [searchVisible, setSearchVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false); // State for dropdown menu
