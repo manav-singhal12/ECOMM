@@ -7,7 +7,7 @@ import { useSession, signOut } from "next-auth/react";
 import productsData from '@/public/products.json'; // Import your products data
 
 const Navbar = () => {
-    const [searchVisible, setSearchVisible] = useState(false);
+    const [searchVisible, setSearchVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false); // State for dropdown menu
@@ -177,18 +177,23 @@ const Navbar = () => {
                 )}
             </div>
             {searchVisible && (
-                <div className="search-results absolute top-[7vh] left-[64vw] w-full max-w-md bg-white shadow-lg rounded-lg mt-2 z-10 border border-gray-200">
-                    {searchResults.length > 0 ? (
-                        searchResults.map((product) => (
-                            <div key={product.id} className="p-3 border-b hover:bg-gray-100 cursor-pointer" onClick={() => handleSearchResultClick(product.id)}>
-                                {product.name}
-                            </div>
-                        ))
-                    ) : (
-                        <div className="p-3 text-center text-gray-600">No results found.</div>
-                    )}
+    <div className="search-results w-[20vw] absolute lg:left-[63vw] lg:top-[8vh] top-[11vh]  sm:top-[10vh]  md:left-10 md:top-28 bg-gray-500 text-white rounded-lg shadow-lg">
+        {searchResults.length > 0 ? (
+            searchResults.map((product) => (
+                <div 
+                    key={product.id} 
+                    className="bg-gray-500 px-4 py-2 hover:bg-gray-600 cursor-pointer w-[15vw] md:w-[20vw] lg:w-[15vw]"
+                    onClick={() => handleSearchResultClick(product.id)}
+                >
+                    {product.name}
                 </div>
-            )}
+            ))
+        ) : (
+            <div className="w-[15vw] md:w-[20vw] lg:w-[15vw] px-4 py-2 text-center">No results found.</div>
+        )}
+    </div>
+)}
+
         </nav>
     );
 }
