@@ -5,7 +5,7 @@ import Image from 'next/image';
 import './Navbar.css'; // Ensure your custom CSS is properly imported
 import { useSession, signOut } from "next-auth/react";
 import productsData from '@/public/products.json'; // Import your products data
-
+import SessionWrapper from './SessionWrapper';
 const Navbar = () => {
     const [searchVisible, setSearchVisible] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -198,4 +198,4 @@ const Navbar = () => {
     );
 }
 
-export default Navbar;
+export default SessionWrapper(Navbar);
