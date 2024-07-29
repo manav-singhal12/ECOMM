@@ -181,7 +181,9 @@ const Navbar = () => {
                 )}
             </div>
             {searchVisible && (
-    <div className="search-results w-[20vw] absolute lg:left-[76vw] lg:top-[8vh] top-[11vh]  sm:top-[10vh]  md:left-10 md:top-28 bg-gray-500 text-white rounded-lg shadow-lg">
+    <div 
+        className={`search-results w-[20vw] absolute ${session ? 'lg:left-[64vw]' : 'lg:left-[76vw]'} lg:top-[8vh] top-[11vh] sm:top-[10vh] md:left-10 md:top-28 bg-gray-500 text-white rounded-lg shadow-lg`}
+    >
         {searchResults.length > 0 ? (
             searchResults.map((product) => (
                 <div 
@@ -197,6 +199,7 @@ const Navbar = () => {
         )}
     </div>
 )}
+
 
         </nav>
     );
