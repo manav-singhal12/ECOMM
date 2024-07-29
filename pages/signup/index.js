@@ -4,6 +4,7 @@ import { signIn } from 'next-auth/react';
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
+import Loader from '@/components/Loader';
 
 export const metadata = {
   title: "Looks-Signup Page",
@@ -14,27 +15,32 @@ const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState({ name: '', email: '', password: '' });
+  const [error, setError] = useState({ name: '', email: '', password: '', general: '' });
+  const [loading, setLoading] = useState(false); // Loader state
   const router = useRouter();
   const { data: session } = useSession();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError({ name: '', email: '', password: '' });
+    setError({ name: '', email: '', password: '', general: '' });
+    setLoading(true); // Start loading
 
     if (name.length < 4) {
       setError(prev => ({ ...prev, name: 'Username must be at least 4 characters long' }));
+      setLoading(false); // Stop loading
       return;
     }
 
     if (password.length < 8) {
       setError(prev => ({ ...prev, password: 'Password must be at least 8 characters long' }));
+      setLoading(false); // Stop loading
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email) || email.endsWith('@looks')) {
       setError(prev => ({ ...prev, email: 'Invalid email format or email ends with @looks' }));
+      setLoading(false); // Stop loading
       return;
     }
 
@@ -61,10 +67,10 @@ const Signup = () => {
 
       if (signInResponse.ok) {
         router.push('/categories'); // Redirect to cart on successful signup and signin
-
         window.location.reload();
       } else {
         console.error('Error signing in:', signInResponse.error);
+        setError(prev => ({ ...prev, general: 'Failed to sign in' }));
       }
     } catch (error) {
       console.error('Error registering user:', error.message);
@@ -73,6 +79,8 @@ const Signup = () => {
       } else {
         setError(prev => ({ ...prev, general: error.message }));
       }
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -133,20 +141,9 @@ const Signup = () => {
               className="border-pink-400 border-2  p-2 font-semibold text-lg text-white cursor-pointer bg-customPink rounded-xl"
             />
           </form>
-          {/* <div className="border-t-2 border-black opacity-50 w-full max-w-md mx-auto text-center mb-2"></div>
-          <div className="mx-auto p-2 text-xl mb-3 pb-3 text-center">OR</div>
-          <div className="flex flex-col gap-3 justify-center items-center w-full max-w-md">
-            <button
-              type="button"
-              className="text-white mb-6 focus:border-customPink focus:outline-customPink gap-3 w-full bg-customPink focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center"
-              onClick={() => signIn("google")}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width={16} viewBox="0 0 488 512"><path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" /></svg>
-              Continue with Google
-            </button>
-          </div> */}
         </div>
       </div>
+      {loading && <Loader />} {/* Display loader when loading */}
     </>
   );
 };

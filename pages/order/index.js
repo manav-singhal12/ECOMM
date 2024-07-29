@@ -126,6 +126,8 @@ const Order = () => {
         });
       }
     }
+    window.location.reload();
+
   };
 
   return (

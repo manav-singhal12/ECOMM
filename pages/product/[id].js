@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
+import Loader from '@/components/Loader';
 
 export const metadata = {
   title: "Looks-Product",
@@ -25,6 +26,7 @@ export default function ProductPage() {
   const [imageIndex, setImageIndex] = useState(0);
   const [cart, setCart] = useState({});
   const [sizes, setSizes] = useState([]);
+  const [loadingAction, setLoadingAction] = useState(false); // Loader state for actions
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -58,6 +60,8 @@ export default function ProductPage() {
   };
 
   const addToCart = async (itemcode, qty, description, price, name, size, variant, image1) => {
+    setLoadingAction(true); // Start loading for Add to Cart
+
     const updatedCart = { ...cart };
     if (itemcode in updatedCart) {
       updatedCart[itemcode].qty += qty;
@@ -116,6 +120,13 @@ export default function ProductPage() {
         });
       }
     }
+    setLoadingAction(false); // Stop loading for Add to Cart
+  };
+
+  const handleBuyNow = () => {
+    setLoadingAction(true); // Start loading for Buy Now
+    // You might want to handle "Buy Now" logic here, e.g., redirect to checkout with item details
+    setLoadingAction(false); // Stop loading for Buy Now
   };
 
   if (loading) return <div>Loading...</div>;
@@ -153,6 +164,7 @@ export default function ProductPage() {
         <title>{product.name}</title>
         <meta name="description" content={product.description || "Explore this product on our site."} />
       </Head>
+      {loadingAction && <Loader />} {/* Show loader when performing actions */}
       <div className="flex flex-col lg:flex-row my-4">
         {/* Left Section - Product Images */}
         <div className="lg:w-2/5 flex flex-col items-center justify-center mb-6 lg:mb-0">
@@ -196,7 +208,7 @@ export default function ProductPage() {
             />
           </div>
           <div className="flex gap-8 mt-6">
-          <div className="buynow h-16 border-2 border-customPink flex justify-center items-center text-xl text-customPink font-semibold hover:bg-customPink hover:text-white cursor-pointer mt-4 ml-10 w-36  rounded-lg">
+            <div className="buynow h-16 border-2 border-customPink flex justify-center items-center text-xl text-customPink font-semibold hover:bg-customPink hover:text-white cursor-pointer mt-4 ml-10 w-36 rounded-lg">
               <lord-icon className='icon-hover'
                 src="https://cdn.lordicon.com/pbrgppbb.json"
                 trigger="hover"
@@ -224,7 +236,7 @@ export default function ProductPage() {
                 }}
                 passHref
               >
-                <span>Buy Now</span>
+                <span onClick={handleBuyNow}>Buy Now</span>
               </Link>
             </div>
             <button 
@@ -276,38 +288,6 @@ export default function ProductPage() {
                 ))}
               </div>
             </div>
-            
-            {/* <div className="buynow h-14 border-2 border-customPink flex justify-center items-center text-xl text-customPink font-semibold hover:bg-customPink hover:text-white cursor-pointer mt-4 ml-10 w-36 rounded-lg">
-              <lord-icon className='icon-hover'
-                src="https://cdn.lordicon.com/pbrgppbb.json"
-                trigger="hover"
-                colors="primary:#EB3963"
-                style={{ width: '25px', height: '25px' }}
-              />
-              <style jsx>{`
-                .icon-hover:hover {
-                  filter: brightness(1.1); 
-                }
-              `}</style>
-              <Link
-                href={{
-                  pathname: '/order',
-                  query: {
-                    itemcode: product.id,
-                    qty: quantity,
-                    description: product.description,
-                    price: product.price,
-                    name: product.name,
-                    size: 'S', // Example size, adjust as needed
-                    variant: 'M', // Example variant, adjust as needed
-                    image1: product.image1,
-                  },
-                }}
-                passHref
-              >
-                <span>Buy Now</span>
-              </Link>
-            </div> */}
           </div>
         </div>
       </div>
